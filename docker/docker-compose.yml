@@ -5,9 +5,9 @@ services:
       context: .
       dockerfile: Dockerfile.laravel
     ports:
-      - "80:80"  # Si vous exposez le port 80 dans votre Dockerfile
+      - "80:80"  # Expose le port 80 du conteneur au port 80 de l'hôte
     volumes:
-      - ./home/mahmoud/projet-rt0707/front:/var/www/
+      - ./home/mahmoud/projet-rt0707/front:/var/www/html  # Assure-toi que le chemin correspond à la structure de ton projet Laravel
 
   # mosquitto:
   #   build: ./mosquitto-docker  # Chemin vers le dossier contenant le Dockerfile
