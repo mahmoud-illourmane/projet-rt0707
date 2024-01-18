@@ -25,6 +25,8 @@ RUN echo '<VirtualHost *:80>\n\
         </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 
 
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
 # Définissez le répertoire de travail personnalisé dans le conteneur
 WORKDIR /www
 
