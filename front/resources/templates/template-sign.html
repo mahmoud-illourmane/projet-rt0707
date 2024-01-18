@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo/logo.ico') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dark-mode/style.css') }}" id="theme-style">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tools/tools.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tools/colors.css') }}">
+    {% block css %}{% endblock %}
+
+    {% block title %}{% endblock %}
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<!-- Loading animation -->
+<div id="loading-animation">
+    <div class="spinner"></div>
+</div>
+
+<body class="body">
+    <button onclick="topFunction()" id="upBoutton" title="Go to top"><i class="material-icons">arrow_upward</i></button>
+    <!-- Navbar -->
+    <div class="custom-navbar">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo.webp') }}" alt="" width="50">
+                </a>
+                <div class="menu">
+                    <a id="menu_open" class="material-icons menu_open" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">menu</a>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-3">
+                        <li class="nav-item">
+                            <div class="nav-item-nav-bar">
+                                <span class="material-icons nav-link-icon">api</span>
+                                <a class="nav-link" href="{{ url_for('themoviedb') }}">TheMovieDB</a>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <div class="switcher-modes">
+                        <a id="mode-switcher">
+                            <i class="material-icons mode-switcher-icon dark-mode-icon">brightness_3</i>
+                            <i class="material-icons mode-switcher-icon light-mode-icon">wb_sunny</i>
+                        </a>
+                    </div>  
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div id="liveToastMsgServer" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="toast-header">
+                            <div class="toast-header-custom">
+                                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo.webp') }}" alt="" width="25">
+                                <strong class="me-auto">Message</strong>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body {{ 'text-bg-danger' if category == 'error' else 'text-bg-success' }}">
+                            <p class="color_8">{{ message }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    
+
+
+    <div class="body-content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-containers">
+                <div class="footer-container">
+                    <h3>À propos du Projet</h3>
+                    <p>
+                        Projet RT0704, réalisé par Mahmoud ILLOURMANE
+                    </p>
+                </div>
+                <div class="footer-container">
+                    <h3>Services utilisés</h3>
+                    <ul>
+                        <li><a href="https://www.python.org/" class="color_3">Python</a></li>
+                        <li><a href="https://flask.palletsprojects.com/en/3.0.x/" class="color_3">Flask</a></li>
+                        <li><a href="https://getbootstrap.com/" class="color_3">Bootstrap</a></li>
+                        <li><a href="https://jquery.com/" class="color_3">jQuery</a></li>
+                    </ul>
+                </div>
+                <div class="footer-container">
+                    <h3>Ressources externes</h3>
+                    <p>Api TheMovieDB<br>
+                    Site : <a href="https://www.themoviedb.org/" class="color_3">TheMovieDb</a><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <!-- Scripts JS-->
+    <script src="{{ url_for('static', filename='js/tools/tools.js') }}"></script>
+    {% block jsScripts %}{% endblock %}
+
+    <!-- Style -->
+    <style>
+        .body-content { 
+            min-height: 80vh;
+            padding-bottom: 20px;
+        }
+    </style>
+</body>

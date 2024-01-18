@@ -1,0 +1,42 @@
+/*==== CONSTS ====*/
+
+/*==== END/CONSTS ====*/
+
+/*== Resumes ==*/
+    .resumes {
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .resume {
+        display: flex;
+        gap: 10px;
+        border-radius: 15px;
+        padding: 10px;
+        width: 20%;
+    }
+
+    .show-qrcode {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: blueviolet;
+    }
+
+/*== END/Resumes ==*/
+
+
+/*Tablettes*/
+@media all  and (min-width: 601px) and (max-width: 1023px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}
+
+/*Smartphones*/
+@media all  and (max-width: 600px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}

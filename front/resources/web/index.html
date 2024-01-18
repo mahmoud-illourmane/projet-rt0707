@@ -1,0 +1,57 @@
+{% extends 'templates/template-user.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/index.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Index</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <h1>Résumé de votre journée d'aujourd'hui</h1>
+    <div class="resumes">
+        <div class="resume">
+            <div class="resume-icon">
+                <span class="material-icons icon-size-L">shopping_basket</span>
+            </div>
+            <div class="resume-content">
+                <h5>Total de tickets achetés</h5>
+                <h6>2</h6>
+            </div>
+        </div>
+
+        <div class="resume">
+            <div class="resume-icon">
+                <span class="material-icons icon-size-L">qr_code_scanner</span>
+            </div>
+            <div class="resume-content">
+                <h5>Total de scanes de ticket</h5>
+                <h6>3</h6>
+            </div>
+        </div>
+
+        <div class="resume">
+            <div class="resume-icon">
+                <span class="material-icons icon-size-L">barcode_reader</span>
+            </div>
+            <div class="resume-content">
+                <h5>Afficher mon dernier ticket acheté</h5>
+                <a href="#" class="show-qrcode">
+                    <span class="material-icons">qr_code_scanner</span>
+                    Afficher
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script>
+        $(document).ready(function () {
+            stopLoadingAnimation();
+        });
+    </script>
+{% endblock %}

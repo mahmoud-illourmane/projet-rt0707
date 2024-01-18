@@ -1,0 +1,11 @@
+# Ignorer les fichiers et les répertoires
+.vscode
+front_end/__pycache__/
+
+# app.py
+
+*.pyc
+*.pyo
+*.pyd
+
+front_end/routes/__pycache__

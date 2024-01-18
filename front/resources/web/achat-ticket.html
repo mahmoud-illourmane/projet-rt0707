@@ -1,0 +1,40 @@
+{% extends 'templates/template-user.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/scan-porte.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Achat de tickets</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <h1>Achat de tockets de transport</h1>
+    
+    <form action="#" method="POST">
+        <div class="width-50-center">
+            <label for="input" class="form-label">Vous souhaitez acheter</label>
+            <select name="selectType" class="form-select" aria-label="Select type">
+                <option selected>Open this select menu</option>
+                <option value="ticket">Ticket</option>
+                <option value="badge">Badge</option>
+            </select>
+            
+            <div class="d-grid">
+                <button id="btn-submit-buy" class="btn btn-success mt-3">Valider mon achat</button>
+            </div>
+        </div>
+    </form>
+    
+    
+</div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script>
+        $(document).ready(function () {
+            stopLoadingAnimation();
+        });
+    </script>
+{% endblock %}

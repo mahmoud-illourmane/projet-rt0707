@@ -1,0 +1,67 @@
+{% extends 'templates/template-user.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/scan-porte.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Scanne de porte</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <h1>Scanne de porte</h1>
+    
+    <div class="operation">
+        <div class="tickets">
+            <h4>Choissisez un ticket si vous en avez</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Date d'achat</th>
+                        <th scope="col">Date de péremption</th>
+                        <th scope="col">Nombre de fois utilisé</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>18/01/24 à 8h00</td>
+                        <td>18/01/25 à 8h00</td>
+                        <td>0</td>
+                        <td>
+                            <button class="btn btn-sm btn-success btn-rounded">Choisir</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>18/01/24 à 15h00</td>
+                        <td>18/01/25 à 17h00</td>
+                        <td>2</td>
+                        <td>
+                            <button class="btn btn-sm btn-success btn-rounded">Choisir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+            
+        <div class="door">
+            <div class="scanner"><span class="material-icons">qr_code_scanner</span></div>
+            <div class="led red"></div>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script>
+        $(document).ready(function () {
+            stopLoadingAnimation();
+        });
+    </script>
+{% endblock %}

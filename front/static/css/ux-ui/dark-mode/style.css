@@ -1,0 +1,41 @@
+/*
+|
+| LIGHT-MODE
+|
+*/
+
+/*==== CONSTS ====*/
+    body { background-color: #2b2a2a !important; }
+    label, ul, li, p, h1, h2, h3, h4, h5, h6 { color: #dedede !important; }
+/*==== END/CONSTS ====*/
+
+/*== Resumes ==*/
+    .resume {
+        background-color: rgb(74, 74, 74);
+        border: 1px solid rgb(145, 145, 145);
+    }
+    .resume-icon span {
+        color: rgb(145, 145, 145);;
+    }
+/*== END/Resumes ==*/
+
+/*== Tables ==*/
+    .table-custom {
+        background-color: rgb(71, 71, 71) !important;
+        color:#dedede !important;
+    }
+/*== END/Tables ==*/
+
+/*Tablettes*/
+@media all  and (min-width: 601px) and (max-width: 1023px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}
+
+/*Smartphones*/
+@media all  and (max-width: 600px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}

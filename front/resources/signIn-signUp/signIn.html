@@ -1,0 +1,48 @@
+{% extends 'signIn-signUp/template.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logIn-signUp/login.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Connexion</title>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="form-container">
+            <h1 class="text-center label-sign">Connexion</h1>
+            <div class="text-center">
+                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo.webp') }}" alt="" width="100">
+            </div>
+            <div class="login-form">
+                <form class="mb-3" method="post" action="/logIn">
+                    <div class="mb-3">
+                        <label for="inputEmail" class="form-label label-sign">Adresse mail <span class="color_7">*</span></label>
+                        <input type="email" class="form-control" name="email" id="inputEmail" aria-describedby="emailHelp" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleInputPassword1" class="form-label label-sign">Mot de passe <span class="color_7">*</span></label>
+                        <input type="password" class="form-control" name="password" id="inputPassword" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Connexion</button>
+                    </div>
+                </form>
+                
+                <div class="text-center">
+                    <a href="signUp">Je n'ai pas encore de compte</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script>
+        $(document).ready(function () {
+            stopLoadingAnimation();
+        });
+    </script>
+{% endblock %}

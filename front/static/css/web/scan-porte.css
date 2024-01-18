@@ -1,0 +1,50 @@
+/*==== CONSTS ====*/
+
+/*==== END/CONSTS ====*/
+
+.door {
+    width: 200px;
+    height: 400px;
+    background-color: #8b8b8b;
+    position: relative;
+    border-radius: 10px;
+}
+
+.scanner {
+    width: 60px;
+    height: 60px;
+    background-color: #0070cc;
+    position: absolute;
+    bottom: 10px;
+    left: 5%;
+    border-radius: 50%;
+    display: flex;
+    top: 50%;
+    align-items: center; /* Centrer l'icône verticalement */
+    justify-content: center; /* Centrer l'icône horizontalement */
+}
+
+.led {
+    width: 60px;
+    height: 10px;
+    position: absolute;
+    bottom: 10px;
+    left: 5%;
+    top: 65%;   
+    border-radius: 10%;
+}
+.red { background-color: red; }
+
+/*Tablettes*/
+@media all  and (min-width: 601px) and (max-width: 1023px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}
+
+/*Smartphones*/
+@media all  and (max-width: 600px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}
