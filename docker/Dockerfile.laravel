@@ -1,0 +1,25 @@
+# Utilisez l'image PHP 8.2 avec Apache
+FROM php:8.2-apache
+
+# Installez les dépendances nécessaires
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    unzip
+
+# Installez Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Installez les extensions PHP nécessaires
+RUN docker-php-ext-install pdo pdo_mysql zip
+
+# Activez le module Apache pour URL rewriting (nécessaire pour Laravel)
+RUN a2enmod rewrite
+
+# Définissez le répertoire de travail personnalisé dans le conteneur
+WORKDIR /www
+
+# Copiez seulement les fichiers de configuration si nécessaire
+# COPY php.ini /usr/local/etc/php/
+
+# Exposez le port 80 (déjà fait par défaut avec l'image officielle)
+# EXPOSE 80

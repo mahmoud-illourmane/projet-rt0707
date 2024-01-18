@@ -1,0 +1,16 @@
+version: '3'
+services:
+  laravel-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.laravel
+    ports:
+      - "80:80"  # Si vous exposez le port 80 dans votre Dockerfile
+    volumes:
+      - ./home/mahmoud/projet-rt0707/front:/var/www/
+
+  # mosquitto:
+  #   build: ./mosquitto-docker  # Chemin vers le dossier contenant le Dockerfile
+  #   ports:
+  #     - "1883:1883"  # Mappez le port MQTT
+  #   container_name: mosquitto  # Nom du conteneur
