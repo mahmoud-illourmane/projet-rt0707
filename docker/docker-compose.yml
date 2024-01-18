@@ -7,7 +7,7 @@ services:
     ports:
       - "80:80"  # Expose le port 80 du conteneur au port 80 de l'hôte
     volumes:
-      - ./home/mahmoud/projet-rt0707/front:/var/www/html  # Assure-toi que le chemin correspond à la structure de ton projet Laravel
+      - /home/mahmoud/projet-rt0707/front:/var/www/html  # Assure-toi que le chemin correspond à la structure de ton projet Laravel
 
   # mosquitto:
   #   build: ./mosquitto-docker  # Chemin vers le dossier contenant le Dockerfile

@@ -18,6 +18,10 @@ RUN a2enmod rewrite
 # Définissez le répertoire de travail personnalisé dans le conteneur
 WORKDIR /www
 
+
+
+
+
 # Copiez seulement les fichiers de configuration si nécessaire
 # COPY php.ini /usr/local/etc/php/
 
