@@ -10,7 +10,7 @@ services:                                           # Définition des services (
     ports:
       - "5000:5000"                                 # Mappage des ports: port 5001 de l'hôte vers le port 5000 du conteneur
     volumes:
-      - /home/toto/projet-rt0707/front:/app         # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur
+      - /home/toto/projet-rt0707/front:/app         # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur.
   
   serveur:
     build:

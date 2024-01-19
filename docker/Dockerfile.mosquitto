@@ -1,4 +1,4 @@
-# Utilisez l'image officielle Eclipse Mosquitto
+# Utilisez l'image officielle Eclipse Mosquitto.
 FROM eclipse-mosquitto
 
 # Copiez vos fichiers de configuration spécifiques

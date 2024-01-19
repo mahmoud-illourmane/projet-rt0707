@@ -3,7 +3,7 @@
 # Utiliser l'image de base Alpine avec Python 3.8
 FROM python:3.8-alpine
 
-# Définir le répertoire de travail dans le conteneur
+# Définir le répertoire de travail dans le conteneur.
 WORKDIR /app
 
 COPY /requirements-serveur.txt /app/
