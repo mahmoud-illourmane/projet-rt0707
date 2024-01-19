@@ -43,6 +43,7 @@ def handleSignUp():
                 "email": user_data.get('email'),
                 "password": user_data.get('password')
             }
+            print("data api.py",data_register)
         except Exception as e:                                                  # Gestion de l'exception
             error_message = f"Erreur de requête vers l'URL distante : {str(e)}"
             return jsonify({                                                    # Je retourne un message d'erreur
@@ -57,10 +58,14 @@ def handleSignUp():
                                                                                 # Gestion de la réponse du serveur Backend 
             if response.status_code == 201:                                     # 201 indique que l'inscription s'est bien déroulé                          
                 response_data = response.json()
-                id = response_data.get('id')
-                first_name = response_data.get('first_name')
-                email = response_data.get('email')
-                print('id: ', id, ' first name:', first_name)
+                # id = response_data.get('id')
+                # first_name = response_data.get('first_name')
+                # email = response_data.get('email')
+                
+                id = 1
+                first_name = "toto"
+                email = "toto@toto.fr"
+                
                 return jsonify({
                     "status": 201,
                     "id" : id,

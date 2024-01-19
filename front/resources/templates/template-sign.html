@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/logo/logo.ico') }}">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/dark-mode/style.css') }}" id="theme-style">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tools/tools.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/tools/colors.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ux-ui/dark-mode/style.css') }}" id="theme-style">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ux-ui/tools/tools.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ux-ui/tools/colors.css') }}">
     {% block css %}{% endblock %}
 
     {% block title %}{% endblock %}
@@ -25,38 +25,7 @@
 
 <body class="body">
     <button onclick="topFunction()" id="upBoutton" title="Go to top"><i class="material-icons">arrow_upward</i></button>
-    <!-- Navbar -->
-    <div class="custom-navbar">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">
-                    <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo.webp') }}" alt="" width="50">
-                </a>
-                <div class="menu">
-                    <a id="menu_open" class="material-icons menu_open" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">menu</a>
-                </div>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-3">
-                        <li class="nav-item">
-                            <div class="nav-item-nav-bar">
-                                <span class="material-icons nav-link-icon">api</span>
-                                <a class="nav-link" href="{{ url_for('themoviedb') }}">TheMovieDB</a>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="switcher-modes">
-                        <a id="mode-switcher">
-                            <i class="material-icons mode-switcher-icon dark-mode-icon">brightness_3</i>
-                            <i class="material-icons mode-switcher-icon light-mode-icon">wb_sunny</i>
-                        </a>
-                    </div>  
-                </div>
-            </div>
-        </nav>
-    </div>
-
+    
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -77,9 +46,6 @@
             {% endif %}
         {% endwith %}
     </div>
-
-    
-
 
     <div class="body-content">
         {% block content %}{% endblock %}

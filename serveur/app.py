@@ -10,6 +10,8 @@
 
 # Importation des packages nécessaires au bon fonctionnement du projet Flask
 from flask import Flask
+from config.database import *
+from pymongo import MongoClient
 
 """
 |
@@ -18,6 +20,22 @@ from flask import Flask
 """
 
 app = Flask(__name__)
+
+# Connexion à MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client["projet"]
+users = db["users"]
+
+# Données de l'utilisateur à insérer
+utilisateur = {
+    "nom": "John Doe",
+    "email": "john.doe@example.com",
+    "age": 30
+}
+
+# Insertion dans la collection 'users'
+resultat = users.insert_one(utilisateur)
+print("Utilisateur inséré avec l'ID :", resultat.inserted_id)
 
 # Activation du mode de débogage
 app.debug = True
