@@ -39,8 +39,8 @@ app.template_folder = 'resources'
 app.static_folder = 'static'
 
 # Configuration de l'url du serveur flask back-end
-app.config['SERVER_BACK_END_URL'] = 'http://127.0.0.1:5001'
-app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
+app.config['SERVER_BACK_END_URL'] = 'http://front:5000'
+app.config['SERVER_FRONT_END_URL'] = 'http://serveur:5000'
 
 # Importations des fichier web.py et api.py
 from routes.api import *

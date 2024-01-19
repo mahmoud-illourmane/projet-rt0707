@@ -1,7 +1,7 @@
 # Ignorer les fichiers et les répertoires
 .vscode
 front_end/__pycache__/
-
+mongoDb/
 # app.py
 
 *.pyc

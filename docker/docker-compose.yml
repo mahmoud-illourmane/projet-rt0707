@@ -1,20 +1,39 @@
-version: '2'                                      # Utilisation de la version 2 de la syntaxe docker-compose
-services:                                         # Définition des services (conteneurs) que vous souhaitez exécuter
+version: '3'                                        # Utilisation de la version 3 de la syntaxe docker-compose
+services:                                           # Définition des services (conteneurs) que vous souhaitez exécuter
 
-  front_end:                                      # Nom du service, ici 'front_end', qui sera utilisé pour référencer ce service dans Docker
-    build:                                        # Instruction pour construire l'image Docker de ce service
-      context: .                                  # Le contexte de build, '.' indique le répertoire courant
-      dockerfile: Dockerfile                      # Nom du fichier Dockerfile à utiliser pour la construction
-    image: image_flask_front_end:1.0              # Nom et tag de l'image Docker qui sera créée
-    container_name: container_p_rt_0704_front_end # Nom du conteneur Docker qui sera créé
+  front:                                            # Nom du service, ici 'front', qui sera utilisé pour référencer ce service dans Docker
+    build:                                          # Instruction pour construire l'image Docker de ce service
+      context: .                                    # Le contexte de build, '.' indique le répertoire courant
+      dockerfile: Dockerfile.front                  # Nom du fichier Dockerfile à utiliser pour la construction
+    image: image_flask_front                        # Nom et tag de l'image Docker qui sera créée
+    container_name: container_front                 # Nom du conteneur Docker qui sera créé
     ports:
-      - "5001:5000"                               # Mappage des ports: port 5001 de l'hôte vers le port 5000 du conteneur
+      - "5000:5000"                                 # Mappage des ports: port 5001 de l'hôte vers le port 5000 du conteneur
     volumes:
-      - /home/toto/projet-rt0704/front_end:/app   # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur
-    networks:
-      - projetRt0704Network                       # Réseau Docker auquel ce service doit être connecté
+      - /home/toto/projet-rt0707/front:/app         # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur
+  
+  serveur:
+    build:
+      context: .
+      dockerfile: Dockerfile.serveur
+    image: image_flask_back
+    container_name: container_serveur
+    ports:
+      - "5001:5000"
+    volumes:
+      - /home/toto/projet-rt0707/serveur:/app
+    environment:
+      - MONGO_USERNAME=mongoadmin
+      - MONGO_PASSWORD=secret
+      - MONGO_HOSTNAME=mongo
+      - MONGO_PORT=27017
 
-networks:                                         # Définition des réseaux personnalisés utilisés par les services
-  projetRt0704Network:
-    external: true                                # Indique que le réseau 'projetRt0704Network' est un réseau externe déjà 
-                                                  # existant, pas créé par ce docker-compose
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - /home/toto/projet-rt0707/mongoDb:/data/db
