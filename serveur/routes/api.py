@@ -38,21 +38,21 @@ def signUp():
                 "role": 1
             }
             
-            # print("Utilisateur données recu : ", user_info)
+            print("Utilisateur données recu : ", user_info)
             
-            users = db_manager.get_users()
-            try:
-                users = db_manager.get_users()
-                resultat = users.insert_one(user_info)
-                print("Utilisateur inséré avec l'ID:", resultat.inserted_id)
-            except PyMongoError as e:
-                print("Erreur lors de l'insertion:", e)
+            # users = db_manager.get_users()
+            # try:
+            #     users = db_manager.get_users()
+            #     resultat = users.insert_one(user_info)
+            #     print("Utilisateur inséré avec l'ID:", resultat.inserted_id)
+            # except PyMongoError as e:
+            #     print("Erreur lors de l'insertion:", e)
     
-            print("PRINT 1: ", users)
-            cursor = users.find({})
-            # Parcourez le curseur et affichez chaque document
-            for document in cursor:
-                print(document)
+            # print("PRINT 1: ", users)
+            # cursor = users.find({})
+            # # Parcourez le curseur et affichez chaque document
+            # for document in cursor:
+            #     print(document)
             
             # # Insertion du document dans la base de données
             # db_manager.users.insert_one(user_info)

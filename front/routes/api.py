@@ -1,9 +1,8 @@
 from app import app
-from flask import request, jsonify
-import requests, base64
-from typing import Dict, Any
+from flask import render_template, request, abort, redirect, url_for, flash, session, jsonify
 
-from flask_login import current_user
+import json
+import requests
 
 """
 |
@@ -35,67 +34,45 @@ def handleSignUp():
         _type_: une réponse Json
     """
     
-    if request.method == 'POST':                                                # Je vérifi que la requête a bien été faite avec POST
-        try:
-            user_data = request.get_json()                                      # Récupération des données JSON reçus
-            data_register = {                                                   # Je forge les données à envoyer
-                "firstName": user_data.get('firstName'),
-                "email": user_data.get('email'),
-                "password": user_data.get('password')
-            }
-            print("data api.py",data_register)
-        except Exception as e:                                                  # Gestion de l'exception
-            error_message = f"Erreur de requête vers l'URL distante : {str(e)}"
-            return jsonify({                                                    # Je retourne un message d'erreur
-                "status": 500,
-                "error": error_message
-            }), 500
+    if request.method == 'POST':
+        # Récupérer les données du formulaire
+        first_name = request.form.get('firstName')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        password_confirm = request.form.get('passwordConfirm')
         
+        # Créer un dictionnaire avec les données à envoyer
+        data = {
+            'firstName': first_name,
+            'email': email,
+            'password': password,
+            'passwordConfirm': password_confirm
+        }
+
         try:
-            api_url = f"{server_back_end_url}/api/signUp"                       # Préparation de l'url du serveur distant
-            response = requests.post(api_url, json=data_register)               # Envoi des données au serveur sitant en utilisant une requête POST
+            # Convertir le dictionnaire en une chaîne JSON
+            user_data = json.dumps(data)
             
-                                                                                # Gestion de la réponse du serveur Backend 
-            if response.status_code == 201:                                     # 201 indique que l'inscription s'est bien déroulé                          
-                response_data = response.json()
-                # id = response_data.get('id')
-                # first_name = response_data.get('first_name')
-                # email = response_data.get('email')
-                
-                id = 1
-                first_name = "toto"
-                email = "toto@toto.fr"
-                
-                return jsonify({
-                    "status": 201,
-                    "id" : id,
-                    "email" : email,
-                    "first_name" : first_name,
-                }), 201
-                # return jsonify(response), 201
-            elif response.status_code == 500:
-                return jsonify({
-                    "status": 500,
-                    "error" : "error serveur frontend"
-                }), 500
+            # Spécification de l'en-tête 'Content-Type' pour indiquer que nous envoyons du JSON
+            headers = {'Content-Type': 'application/json'}
+            api_url = f"{server_back_end_url}/api/signUp"
+            response = requests.post(api_url, data=user_data, headers=headers)
+            
+            # Vous pouvez gérer la réponse du serveur backend comme nécessaire
+            if response.status_code == 201:
+                flash('Inscription réussie', 'success')  
+                return redirect(url_for('login'))
             else:
-                return jsonify({
-                    "status": 409,
-                    "error" : "L'email est déjà utilisé."
-                }), 409
-        except requests.exceptions.RequestException as e:
-            print(f"Erreur de requête vers l'API du back-end : {e}")
-            
-            return jsonify({
-                "status": 500, 
-                "message": "Erreur de communication avec l'API du back-end"
-            }), 500
-            
-    response = {
-            "status": 405,
-            "error": "Vous devez utiliser une requête POST pour cette route."
-    }
-    return jsonify(response), 405
+                flash('Erreur lors de l\'inscription', 'error') 
+                return redirect(url_for('signUp'))
+        
+        except Exception as e:
+            # Gérer les erreurs ici, par exemple, imprimer l'erreur
+            print(f"Erreur lors de l'envoi de la requête POST : {str(e)}")
+            return jsonify({'message': 'Erreur lors de l\'inscription'})
+   
+    flash('Vous devez utiliser une requête POST', 'danger')  
+    return redirect(url_for('signUp'))
     
 @app.route('/api/logIn', methods=['POST'])
 def handleLogIn():

@@ -76,7 +76,7 @@ def gestionTicket():
 #         return User(user_id, user_info.get('first_name'), user_info.get('email'))
 #     return None
 
-@app.route('/signUp', methods=['GET', 'POST'])
+@app.route('/signUp', methods=['GET'])
 def signUp():
     """
     Summary:
@@ -90,67 +90,10 @@ def signUp():
     if request.method == 'GET':
         return render_template('signIn-signUp/signUp.html')
     
-    elif request.method == 'POST':
-        firstName = request.form['firstName']
-        email = request.form['email']
-        password = request.form['password']
-        passwordConfirm = request.form['passwordConfirm']
-        
-        # Vérifie si les mots de passe correspondent
-        if password != passwordConfirm:
-            flash('Les mots de passe ne correspondent pas. Veuillez réessayer.')
-            return redirect(url_for('signUp')) 
-        
-        # Je forge les données de la requête pour le fichier api.py du serveur front 
-        data = {
-            "firstName": firstName,
-            "email": email,
-            "password": password
-        }
-        
-        # Convertir le dictionnaire en une chaîne JSON
-        user_data = json.dumps(data)
-        # Spécification de l'en-tête "Content-Type" pour indiquer que j'envoie du JSON
-        headers = {'Content-Type': 'application/json'}
-        api_url = f"{server_front_end_url}/api/signUp"
-        
-        # J'envoie les données en http au fichier api.py pour effectuer la requête.
-        try:
-            response = requests.post(api_url, data=user_data, headers=headers)
-            response.raise_for_status()
-            if response.status_code == 201:
-                # response_data = response.json()
-                print("coucou")
-                return redirect(url_for('signUp')) 
-            elif response.status_code == 409:
-                return redirect(url_for('signUp')) 
-        except requests.exceptions.RequestException as e:
-            return redirect(url_for('signUp')) 
-        
-        # try:
-        #     response = requests.post(api_url, data=user_data, headers=headers)
-        #     response.raise_for_status()
-            
-        #     if response.status_code == 201:
-        #         response_data = response.json()
-        #         user = User(response_data.get('id'), response_data.get('first_name'), response_data.get('email'))
-        #         login_user(user)
-        #         # Stocker les informations dans la session
-        #         session['user_info'] = {'id': user.id, 'first_name': user.first_name, 'email': user.email}
-        #         return redirect(url_for('index'))
-        #     elif response.status_code == 409:
-        #         flash("L'email est déjà utilisé.")
-        #         return redirect(url_for('signUp')) 
-        #     else:
-        #         flash("Une erreur s'est produite web.py.")
-        #         return redirect(url_for('signUp')) 
-        # except requests.exceptions.RequestException as e:
-        #     error_message = f"Erreur de requête vers l'URL distante : {str(e)}"
-        #     flash(error_message)
-        #     return redirect(url_for('signUp')) 
-    abort(405)
+    flash('Vous devez utiliser une requête GET', 'danger')  
+    return redirect(url_for('signUp'))
     
-@app.route('/logIn', methods=['GET', 'POST'])
+@app.route('/logIn', methods=['GET'])
 def login():
     if request.method == 'POST':
         # Ici, envoie la requête à l'API du serveur back-end
