@@ -23,14 +23,23 @@
 
 /*Tablettes*/
 @media all  and (min-width: 601px) and (max-width: 1023px){
-/*==== CONSTS ====*/
+    /*==== CONSTS ====*/
 
-/*==== END/CONSTS ====*/
+    /*==== END/CONSTS ====*/
 }
 
 /*Smartphones*/
 @media all  and (max-width: 600px){
-/*==== CONSTS ====*/
+    /*==== CONSTS ====*/
 
-/*==== END/CONSTS ====*/
+    /*==== END/CONSTS ====*/
+
+    .form-container {
+        padding-top: 20px;
+    }
+    .signup-form {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }

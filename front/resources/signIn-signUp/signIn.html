@@ -1,7 +1,7 @@
 {% extends 'templates/template-sign.html' %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/ux-ui/logIn-signUp/login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logIn-signUp/login.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -12,10 +12,12 @@
     <div class="container">
 
         <div class="form-container">
+
             <h1 class="text-center label-sign">Connexion</h1>
             <div class="text-center">
-                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo.webp') }}" alt="" width="100">
+                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo-202-208.webp') }}" alt="Logo Application" width="100">
             </div>
+
             <div class="login-form">
                 <form class="mb-3" method="post" action="/logIn">
                     <div class="mb-3">
