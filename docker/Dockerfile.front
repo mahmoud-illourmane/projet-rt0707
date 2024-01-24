@@ -1,4 +1,4 @@
-# DOCKER FILE DU FRONT
+# DOCKERFILE DU FRONT
 
 # Utiliser l'image de base Alpine avec Python 3.8
 FROM python:3.8-alpine

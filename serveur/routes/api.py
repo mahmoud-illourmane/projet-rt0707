@@ -1,7 +1,8 @@
-from app import app, db_manager                             # Importation du fichier de configuration Flask
+from app import app            
 from flask import jsonify, request
 import json, base64
 from pymongo.errors import PyMongoError
+from src.classes.mongoDb import MongoDBManager
 
 """
 |
@@ -86,7 +87,6 @@ def signUp():
                 "error": "Erreur de réception des données coté serveur."
             }), 500
         
-
 @app.route('/api/logIn', methods=['POST'])
 def logIn():
     """

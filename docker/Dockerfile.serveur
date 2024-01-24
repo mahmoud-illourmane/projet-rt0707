@@ -1,4 +1,4 @@
-# DOCKER FILE DU SERVEUR
+# DOCKERFILE DU SERVEUR
 
 # Utiliser l'image de base Alpine avec Python 3.8
 FROM python:3.8-alpine

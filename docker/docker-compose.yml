@@ -12,28 +12,28 @@ services:                                           # Définition des services (
     volumes:
       - /home/toto/projet-rt0707/front:/app         # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur.
   
-  serveur:
-    build:
-      context: .
-      dockerfile: Dockerfile.serveur
-    image: image_flask_back
-    container_name: container_serveur
+  serveur:                                          # Définition du service "serveur"
+    build:                                          # Spécifie la construction de l'image
+      context: .                                    # Répertoire contexte de construction
+      dockerfile: Dockerfile.serveur                # Utilise le fichier Dockerfile.serveur
+    image: image_flask_back                         # Nom de l'image générée
+    container_name: container_serveur               # Nom du conteneur
     ports:
-      - "5001:5000"
+      - "5001:5000"                                 # Mappage du port 5001 de l'hôte au port 5000 du conteneur
     volumes:
-      - /home/toto/projet-rt0707/serveur:/app
-    environment:
-      - MONGO_USERNAME=mongoadmin
-      - MONGO_PASSWORD=secret
-      - MONGO_HOSTNAME=mongo
-      - MONGO_PORT=27017
+      - /home/toto/projet-rt0707/serveur:/app       # Montage du volume hôte dans le conteneur
+    environment:                                    # Variables d'environnement pour le service
+      - MONGO_USERNAME=mongoadmin                   # Nom d'utilisateur MongoDB
+      - MONGO_PASSWORD=secret                       # Mot de passe MongoDB
+      - MONGO_HOSTNAME=mongo                        # Nom d'hôte de MongoDB
+      - MONGO_PORT=27017                            # Port de MongoDB
 
-  mongo:
-    image: mongo:latest
+  mongo:                                            # Définition du service "mongo"
+    image: mongo:latest                             # Utilise l'image MongoDB la plus récente
     ports:
-      - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: mongoadmin
-      MONGO_INITDB_ROOT_PASSWORD: secret
+      - "27017:27017"                               # Mappage du port 27017 de l'hôte au port 27017 du conteneur
+    environment:                                    # Variables d'environnement pour le service MongoDB
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin        # Nom d'utilisateur root MongoDB
+      MONGO_INITDB_ROOT_PASSWORD: secret            # Mot de passe root MongoDB
     volumes:
-      - /home/toto/projet-rt0707/mongoDb:/data/db
+      - /home/toto/projet-rt0707/mongoDb:/data/db   # Montage du volume hôte dans le conteneur MongoDB

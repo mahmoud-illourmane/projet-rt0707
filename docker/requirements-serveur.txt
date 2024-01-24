@@ -1,5 +1,5 @@
 #
-Flask==3.0.0
+Flask==3.0.1
 requests==2.31.0
 gunicorn==21.2.0 # Gunicorn est un serveur HTTP WSGI pour UNIX, conçu pour servir des applications Python en production
 pymongo
