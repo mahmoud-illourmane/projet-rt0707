@@ -6,6 +6,10 @@
  | 
 */
 
+// Toats IDs
+var liveToastMsgServer = $('#liveToastMsgServer');                      
+var liveToastMsgServerContent = $('#liveToastMsgServerContent');      
+
 function topFunction() {
     $('body,html').animate({scrollTop: 0}, 800);
     return false;
@@ -24,7 +28,7 @@ function stopLoadingAnimation() {
      * Affiche un message toast de bootstrap.
      *
      * @param {string} message - Le message à afficher dans le toast.
-     * @param {string} cssClass - La classe CSS à appliquer au toast pour le style personnalisé.
+     * @param {string} cssClass - La classe CSS à appliquer text-success ou text-danger par exemple
      */
     function showToastMessage(message, cssClass) {
         // Sélectionne l'élément .toast-body dans le toast

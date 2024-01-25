@@ -19,8 +19,6 @@ class MongoDBManager:
                 
                 -tickets
                 
-                -ticketsJ
-                
                 -badges
         """
         
@@ -34,7 +32,6 @@ class MongoDBManager:
             # Initialisation des collections
             self.users = self.db["users"]
             self.tickets = self.db["tickets"]
-            self.ticketsJ = self.db["ticketsJ"]
             self.badges = self.db["badges"]
         except PyMongoError as e:
             print(f"Erreur lors de l'établissement de la connexion à MongoDB: {e}")

@@ -7,6 +7,11 @@
 /*==== CONSTS ====*/
     body { background-color: #2b2a2a !important; }
     label, ul, li, p, h1, h2, h3, h4, h5, h6 { color: #dedede !important; }
+
+    /*== Achat QRCODE ==*/
+        .qr-code-id span, .date-creation span, .type-ticket-badge span , .date-validite span { color: #dedede !important; }
+        .qr-code-id h6, .date-creation h6, .type-ticket-badge h6 , .date-validite h6 { color: #dedede !important; }
+    /*== Achat QRCODE ==*/
 /*==== END/CONSTS ====*/
 
 /*== Resumes ==*/

@@ -1,9 +1,12 @@
 from app import app, DATABASE_NAME, MONGO_URI          
 from flask import jsonify, request
-import json, base64
+import json, base64, datetime
 from pymongo.errors import PyMongoError
+
 from src.classes.mongoDb import MongoDBManager
 from src.classes.user import User
+from src.classes.ticket import Ticket
+from src.classes.badge import Badge
 
 """
 |
@@ -35,8 +38,6 @@ def signUp():
             # Récuperation des données d'inscription
             user_data = request.get_json()
             
-            print('donnés recus :', user_data)
-        
             new_user = User(db_manager, user_data.get('firstName'), user_data.get('email'), user_data.get('password'), 1)
             response = new_user.createUser()
             return response
@@ -91,6 +92,11 @@ def logIn():
                 "status": 500,
                 "error": error_message
             }), 500
+    response = {
+            "status": 405,
+            "error": "Vous devez utiliser une requête POST pour cette route."
+    }
+    return jsonify(response), 405
 
 @app.route('/api/delete-user', methods=['POST'])
 def deleteUser():
@@ -140,3 +146,48 @@ def deleteUser():
 #
 #   Web Application
 #
+
+@app.route('/api/purchase', methods=['POST'])
+def purchase():
+    if request.method == 'POST':
+        user_id = None
+        date_achat = datetime.datetime.now()
+        validite = date_achat + datetime.timedelta(days=365)
+        etat = 'N'
+        type_ticket = None
+        
+        try:
+            data_receive = request.get_json()
+            
+            # Je vérifie si l'achat est effectué par un utilisateur authentifié
+            if 'user_id' in data_receive:
+                user_id = data_receive['user_id']
+        except Exception as e:
+            return jsonify({
+                "status": 500, 
+                "error": str(e)
+            }), 500
+        
+        if data_receive['selectType'] not in ['Badge', '2H', '1J']:
+            return jsonify({
+                "status": 400, 
+                "error": 'Sélection de type invalide.'
+            }), 400
+  
+        type_ticket = data_receive['selectType']
+        
+        if type_ticket == 'Badge':
+            validite = date_achat + datetime.timedelta(days=30)
+            new_badge = Badge(db_manager, date_achat, validite, etat, None, user_id)
+            result = new_badge.createBadge()
+        else:    
+            new_ticket = Ticket(db_manager, date_achat, type_ticket, validite, etat, None, user_id)
+            result = new_ticket.createTicket()
+
+        return result       
+            
+    response = {
+            "status": 405,
+            "error": "Vous devez utiliser une requête POST pour cette route."
+    }
+    return jsonify(response), 405

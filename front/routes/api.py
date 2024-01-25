@@ -31,7 +31,7 @@ server_back_end_url = app.config['SERVER_BACK_END_URL']
 # Initialisation de LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'web.login'
+login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -254,3 +254,29 @@ def deleteUser():
 #   Web Application
 #
 #
+
+@app.route('/api/purchase', methods=['POST'])
+def purchase():
+    if request.method == 'POST':  
+        data = request.get_json()
+        
+        # Si l'utilisateur est authentifier on envoi son id
+        if current_user.is_authenticated:
+            data['user_id'] = str(current_user.id)
+
+        api_url = f"{server_back_end_url}/api/purchase"
+        
+        try:
+            response = requests.post(api_url, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 2: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+            "status": 405,
+            "error": "Vous devez utiliser une requête POST pour cette route."
+    }

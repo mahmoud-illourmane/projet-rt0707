@@ -27,7 +27,7 @@ class User:
     
     def createUser(self):
         """
-        Crée un nouvel utilisateur dans la base de données.
+            Crée un nouvel utilisateur dans la base de données.
         """
         
         try:
@@ -57,10 +57,7 @@ class User:
             }
 
             # Insérer l'utilisateur dans la base de données
-            print('avant insertion')
             result = users_collection.insert_one(user_data)
-            print('après insertion', result.inserted_id)
-            
             if result.inserted_id:
                 return jsonify({
                     'status': 201,

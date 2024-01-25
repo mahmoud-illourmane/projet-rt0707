@@ -1,0 +1,100 @@
+/*==== CONSTS ====*/
+
+/*==== END/CONSTS ====*/
+
+/*== Ticket infos ==*/
+    .tickets {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-bottom: 50px;
+        margin-top: 50px;
+    }
+
+    .ticket {
+        display: inline-flex;
+        flex-direction: column;
+        width: 20%;
+        background-color: rgb(46, 122, 89);
+        border-radius: 15px;
+        padding: 15px;
+    }
+    .ticket-description p, .ticket-description h3 {
+        color: #dedbdb !important;
+    }
+    .ticket-illustration {
+        text-align: center;
+    }
+/*== END/Ticket infos ==*/
+
+/*== Ticket Buy ==*/
+    .qr-code {
+        width: 40%;
+        margin-left: auto;
+        margin-right: auto;
+        background-color: #6b4980;
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .qr-code-infos {
+        width: 65%;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        margin-top: 15px;
+        gap: 10px;
+    }
+    .qr-code-id, .date-creation, .type-ticket-badge, .date-validite {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .qr-code-id span, .date-creation span, .type-ticket-badge span, .date-validite span{
+        font-size: 30px;
+    }
+/*== END/Ticket Buy ==*/
+
+/*Tablettes*/
+@media all  and (min-width: 601px) and (max-width: 1023px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+
+    /*== Ticket ==*/
+        .tickets {
+            gap: 20px;
+        }
+        .ticket {
+            width: 40%;
+        }
+    /*== END/Ticket ==*/
+}
+
+/*Smartphones*/
+@media all  and (max-width: 600px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+
+    /*== Ticket ==*/
+        .tickets {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .ticket {
+            width: 100%;
+        }
+    /*== END/Ticket ==*/
+
+    /*== Ticket Buy ==*/
+        .qr-code {
+            width: 100%;
+        }
+        .qr-code-infos {
+            width: 100%;
+        }
+    /*== END/Ticket Buy ==*/
+}

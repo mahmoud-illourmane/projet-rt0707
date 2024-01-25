@@ -1,7 +1,7 @@
 {% extends 'views/templates/template-user.html' %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/scan-porte.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/achat-ticket.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -10,28 +10,79 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
-    <h1>Achat de tockets de transport</h1>
+    <h1>Achat de tickets de transport</h1>
     
-    <form action="#" method="POST">
+    <!-- Tickets informations -->
+    <div class="tickets">
+        <div class="ticket">
+            <div class="ticket-illustration">
+                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo-202-208.webp') }}" alt="Logo Application" width="100">
+            </div>
+            <div class="ticket-description">
+                <h3>Ticket liberté une journée</h3>
+                <p>
+                    Ce ticket vous permet d'utiliser les transports en commun pendant 24 heures de manière illimitée dans toute la ville de Reims.
+                    <br>
+                    Ticket valable 1 an.
+                </p>
+            </div>
+        </div>
+
+        <div class="ticket">
+            <div class="ticket-illustration">
+                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo-202-208.webp') }}" alt="Logo Application" width="100">
+            </div>
+            <div class="ticket-description">
+                <h3>Ticket 2 heures</h3>
+                <p>
+                    Ce ticket vous permet d'utiliser les transports en commun pendant 2 heures de manière illimitée dans toute la ville de Reims.
+                    <br>
+                    Ticket valable 1 an, sauf lors de la première utilisation, où il devient valable 2 heures.
+                </p>
+            </div>
+        </div>
+
+        <div class="ticket">
+            <div class="ticket-illustration">
+                <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo-202-208.webp') }}" alt="Logo Application" width="100">
+            </div>
+            <div class="ticket-description">
+                <h3>Badge 1 mois</h3>
+                <p>
+                    Ce badge vous permet d'utiliser les transports en commun de manière illimitée dans toute la ville de Reims pendant un mois.
+                    <br>
+                    Le badge doit être rechargé tous les mois.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <form id="purchase-form">
         <div class="width-50-center">
             <label for="input" class="form-label">Vous souhaitez acheter</label>
-            <select name="selectType" class="form-select" aria-label="Select type">
-                <option selected>Open this select menu</option>
-                <option value="ticket">Ticket</option>
-                <option value="badge">Badge</option>
+            <select name="selectType" class="form-select" aria-label="Select type" required>
+                <option selected value="" disabled>Séléctionner</option>
+                <option value="1J">Ticket une journée illimité</option>
+                <option value="2H">Ticket 2 heures</option>
+                <option value="Badge">Badge 1 mois</option>
             </select>
             
-            <div class="d-grid">
+            <div class="d-grid mb-3">
                 <button id="btn-submit-buy" class="btn btn-success mt-3">Valider mon achat</button>
             </div>
         </div>
     </form>
-    
+
+    <div class="qr-code text-center">
+        <span class="not-visible">Q</span>
+    </div>
     
 </div>
 {% endblock %}
 
 {% block jsScripts %}
+    <script src="{{ url_for('static', filename='js/views/interfaces/achat-ticket.js') }}"></script>
+
     <script>
         $(document).ready(function () {
             stopLoadingAnimation();

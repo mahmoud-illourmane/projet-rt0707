@@ -1,5 +1,6 @@
 /*==== Const ====*/
-
+    .not-visible { display: none; }
+    
     /*== Inputs width ==*/
         .input-width {
             width: 50%;
