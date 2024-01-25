@@ -1,9 +1,10 @@
 /*==== CONSTS ====*/
+    .label-sign { color: #fff !important; }
     /*== Toast ==*/
-    .toast-body p{
-        color: black !important;
-    }
-/*== END/Toast ==*/
+        .toast-body p{
+            color: black !important;
+        }
+    /*== END/Toast ==*/
 /*==== END/CONSTS ====*/
 
 /*== Body ==*/

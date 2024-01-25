@@ -147,6 +147,20 @@ def deleteUser():
 #   Web Application
 #
 
+@app.route('/api/get/generals-infos-user', methods=['GET'])
+def getGeneralsInfosUser():
+    if request.method == 'GET':
+        user_id = request.args.get('user_id', default=None, type=str)
+
+        result = User.getGeneralsInfosUser(db_manager, user_id)
+        
+        return result
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête POST pour cette route."
+    }
+    return jsonify(response), 405 
+
 @app.route('/api/purchase', methods=['POST'])
 def purchase():
     if request.method == 'POST':

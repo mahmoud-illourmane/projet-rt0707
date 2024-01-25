@@ -12,17 +12,20 @@
         .qr-code-id span, .date-creation span, .type-ticket-badge span , .date-validite span { color: #dedede !important; }
         .qr-code-id h6, .date-creation h6, .type-ticket-badge h6 , .date-validite h6 { color: #dedede !important; }
     /*== Achat QRCODE ==*/
+
+    /*== Modal ==*/
+        .modal-header, .modal-body, .modal-footer {
+            background-color: #2b2a2a !important;
+        }
+        .icon-close-modal, .modal-header h3 {
+            color: #d7d4d4;
+            text-decoration: none;
+        }
+    /*== END/Modal ==*/
 /*==== END/CONSTS ====*/
 
-/*== Resumes ==*/
-    .resume {
-        background-color: rgb(74, 74, 74);
-        border: 1px solid rgb(145, 145, 145);
-    }
-    .resume-icon span {
-        color: rgb(145, 145, 145);;
-    }
-/*== END/Resumes ==*/
+
+
 
 /*== Tables ==*/
     .table-custom {
@@ -30,6 +33,22 @@
         color:#dedede !important;
     }
 /*== END/Tables ==*/
+
+/*== Index ==*/
+    /*== Resumes ==*/
+        .resume {
+            background-color: rgb(74, 74, 74);
+            border: 1px solid rgb(145, 145, 145);
+        }
+        .resume-icon span {
+            color: rgb(145, 145, 145);;
+        }
+    /*== END/Resumes ==*/
+
+    .show-qrcode {
+        color: rgb(218, 157, 71);
+    }
+/*== END/Index ==*/
 
 /*Tablettes*/
 @media all  and (min-width: 601px) and (max-width: 1023px){

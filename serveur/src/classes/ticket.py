@@ -6,7 +6,7 @@ from src.classes.mongoDb import MongoDBManager
 from src.classes.qrCode import QRCode
 
 class Ticket:
-    def __init__(self, db_manager:MongoDBManager, date_achat:datetime, type:str, validite:datetime, etat='N', id=None, user_id=None):
+    def __init__(self, db_manager:MongoDBManager, date_achat:datetime, type:str, validite:datetime, etat='N', nb_scannes=0, id=None, user_id=None):
         self.id = id
         self.user_id = user_id
         self.db_manager = db_manager
@@ -14,6 +14,7 @@ class Ticket:
         self.type = type
         self.validite = validite
         self.etat = etat
+        self.nb_scannes = nb_scannes
     
     def createTicket(self):
         try:
@@ -30,7 +31,8 @@ class Ticket:
             'date_achat': self.date_achat,
             'type': self.type,
             'validite': self.validite,
-            'etat': self.etat
+            'etat': self.etat,
+            'nb_scannes': self.nb_scannes
         }
         
         try:
@@ -65,5 +67,4 @@ class Ticket:
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
             }), 500
             
-        
-        
+    

@@ -18,8 +18,8 @@
                 <span class="material-icons icon-size-L">shopping_basket</span>
             </div>
             <div class="resume-content">
-                <h5>Total de tickets achetés</h5>
-                <h6>2</h6>
+                <h5>Total de tickets achetés ce mois-ci</h5>
+                <h6 id="total-achat">0</h6>
             </div>
         </div>
 
@@ -28,8 +28,8 @@
                 <span class="material-icons icon-size-L">qr_code_scanner</span>
             </div>
             <div class="resume-content">
-                <h5>Total de scanes de ticket</h5>
-                <h6>3</h6>
+                <h5>Total de scanes effectué ce mois-ci</h5>
+                <h6 id="total-scanes">0</h6>
             </div>
         </div>
 
@@ -39,12 +39,35 @@
             </div>
             <div class="resume-content">
                 <h5>Afficher mon dernier ticket acheté</h5>
-                <a href="#" class="show-qrcode">
+                <a class="show-qrcode" data-bs-toggle="modal" data-bs-target="#show-last-ticket">
                     <span class="material-icons">qr_code_scanner</span>
                     Afficher
                 </a>
             </div>
         </div>
+        
+        <!-- Modal -->
+        <div class="modal fade" id="show-last-ticket" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="show-last-ticket" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title fs-5">Dernier Ticket Acheté</h3>
+                        <a type="button" class="material-icons icon-close-modal" data-bs-dismiss="modal" aria-label="Close">close</a>
+                    </div>
+                    <div class="modal-body qr-code-modal-index">
+                        <h5>Code QR</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger btn-rounded" data-bs-dismiss="modal">Fermer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container">
+        
     </div>
 
     {% if current_user.is_authenticated %}
@@ -56,6 +79,7 @@
 {% endblock %}
 
 {% block jsScripts %}
+    <script src="{{ url_for('static', filename='js/views/index.js') }}"></script>
     <script>
         $(document).ready(function () {
             stopLoadingAnimation();
