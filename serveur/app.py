@@ -10,8 +10,6 @@
 
 # Importation des packages nécessaires au bon fonctionnement du projet Flask
 from flask import Flask
-import os
-
 
 """
 |
@@ -20,27 +18,24 @@ import os
 """
 
 app = Flask(__name__)
-
 # Activation du mode de débogage
 app.debug = True
 
-# Récupération des variables d'environnement pour la connexion MongoDB
-MONGO_USERNAME = os.environ.get('MONGO_USERNAME')
-MONGO_PASSWORD = os.environ.get('MONGO_PASSWORD')
-MONGO_HOSTNAME = os.environ.get('MONGO_HOSTNAME')
-MONGO_PORT = os.environ.get('MONGO_PORT')
+app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
 
-# Configuration de la connexion à MongoDB
-MONGO_URI = f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOSTNAME}:{MONGO_PORT}/"
+
+# Récupération des variables d'environnement pour la connexion MongoDB en mode VM
+MONGO_USERNAME = 'mongoadmin'
+MONGO_PASSWORD = 'secret'
+MONGO_HOSTNAME = 'mongo'
+MONGO_PORT = 27017
+
+# Configuration de la connexion à MongoDB En Mode Local
+MONGO_URI = f"mongodb://localhost:27017"
 DATABASE_NAME = "projetRt0707"
 
-
-# Initialisation et utilisation de la connexion MongoDB
-# with MongoDBManager(MONGO_URI, DATABASE_NAME) as db_manager:
-    # users_collection = db_manager.get_collection('users')
-    
 # Importation du fichier api.py
 from routes.api import *
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5001)

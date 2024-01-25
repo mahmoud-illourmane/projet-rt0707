@@ -1,10 +1,12 @@
-from app import db_manager
+from flask import jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from pymongo.errors import PyMongoError
 
+from src.classes.mongoDb import MongoDBManager
+
 class User:
-    def __init__(self, db_manager, firstName, email, password, role, id=None):
+    def __init__(self, db_manager: MongoDBManager, firstName, email, password, role, id=None):
         """
         Initialise un nouvel user ou charge un user existant.
 
@@ -20,47 +22,67 @@ class User:
         self.id = id
         self.firstName = firstName
         self.email = email
-        self.password = password  # Doit être hashé si déjà existant.
+        self.password = password
         self.role = role
     
     def createUser(self):
         """
-        Crée un nouvel user dans la base de données.
+        Crée un nouvel utilisateur dans la base de données.
         """
         
         try:
-            # Créez un document à insérer dans la collection
+            # Vérification de si l'email existe déjà
+            users_collection = self.db_manager.get_collection('users')
+            if users_collection.find_one({'email': self.email}):
+                return jsonify({
+                    'status': 400,
+                    'error': 'Email déjà utilisé'
+                }), 400
+
+            if self.role not in [1, 2, 3]:
+                return jsonify({
+                    'status': 400,
+                    'error': 'La valeur du rôle n\'est pas reconnue.'
+                }), 400
+
+            # Hacher le mot de passe avant de l'insérer
+            hashed_password = generate_password_hash(self.password)
+
+            # Créer le document utilisateur
             user_data = {
-                "firstName": "John",
-                "email": "john@example.com",
-                "password": "password123",
-                "role": 1
+                'firstName': self.firstName,
+                'email': self.email,
+                'password': hashed_password,
+                'role': self.role
             }
 
-            result = self.db_manager.insert_one(user_data)
-            self.id = result.inserted_id
+            # Insérer l'utilisateur dans la base de données
+            print('avant insertion')
+            result = users_collection.insert_one(user_data)
+            print('après insertion', result.inserted_id)
             
             if result.inserted_id:
-                # L'insertion a réussi, renvoyez une réponse de réussite
-                response = {
+                return jsonify({
                     'status': 201,
                     'id': str(result.inserted_id),
-                    'first_name': user_data['firstName'],
-                    'email': user_data['email']
-                }
-                print(response)
+                    'role': self.role
+                }), 201
             else:
-                # Gestion des erreurs si l'insertion a échoué
-                print("L'insertion a échoué.")
+                return jsonify({
+                    'status': 304, 
+                    'error': 'Une erreur lors de l\'insertion'
+                }), 304
+
         except PyMongoError as e:
-            # Gestion des erreurs de PyMongo (par exemple, perte de connexion à la base de données)
-            print(f"Une erreur PyMongo s'est produite : {str(e)}")
+            return jsonify({
+                'status': 500,
+                'error': f"Une erreur PyMongo s'est produite : {str(e)}"
+            }), 500
         except Exception as e:
-            # Gestion d'autres exceptions non spécifiques à PyMongo
-            print(f"Une erreur inattendue s'est produite : {str(e)}")
-        finally:
-            # Assurez-vous de fermer la connexion à la base de données, même en cas d'erreur
-            self.db_manager.close_connection()
+            return jsonify({
+                'status': 500,
+                'error': f"Une erreur inattendue s'est produite : {str(e)}"
+            }), 500
         
     def updateUser(self):
         """
@@ -97,22 +119,27 @@ class User:
         }
 
     @staticmethod
-    def authUser(db_manager, email, password):
+    def login(db_manager, email:str, password:str):
         """
-        Charge un user existant à partir de la base de données en utilisant son ID.
+            Authentifie un utilisateur en vérifiant l'email et le mot de passe dans la base de données.
 
-        :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
-        :param id_user: ID de l'user dans la base de données.
-        :return: Une instance de user.
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param email: Adresse e-mail de l'utilisateur à authentifier.
+            :param password: Mot de passe de l'utilisateur à vérifier.
+            :return: Une réponse JSON avec le statut HTTP approprié.
         """
-        user_data = db_manager.get_users().find_one({"email": email, "password": password})
-        if user_data:
-            return User(
-                db_manager,
-                user_data["firstName"],
-                user_data["email"],
-                user_data["password"],
-                user_data["role"],
-                id=user_data["_id"]
-            )
-        return None
+
+        user = db_manager.get_collection('users').find_one({"email": email})
+        if user:
+            # Vérification du mot de passe haché
+            if check_password_hash(user['password'], password):
+                return jsonify({
+                    'status': 200,
+                    'id': str(user['_id']),
+                    'first_name': user['firstName'],
+                    'email': user['email'],
+                    'role': user['role']
+                }), 200
+        return jsonify({
+            'status': 401,
+        }), 401

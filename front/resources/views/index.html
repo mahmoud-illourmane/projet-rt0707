@@ -1,4 +1,4 @@
-{% extends 'templates/template-user.html' %}
+{% extends 'views/templates/template-user.html' %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/index.css') }}">
@@ -10,6 +10,7 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
+
     <h1>Résumé de votre journée d'aujourd'hui</h1>
     <div class="resumes">
         <div class="resume">
@@ -45,6 +46,12 @@
             </div>
         </div>
     </div>
+
+    {% if current_user.is_authenticated %}
+        <p>Bienvenue, {{ current_user.first_name }}!</p>
+    {% else %}
+        <p>Connectez-vous pour accéder à votre compte.</p>
+    {% endif %}
 </div>
 {% endblock %}
 

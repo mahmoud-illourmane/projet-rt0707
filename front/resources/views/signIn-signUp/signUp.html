@@ -1,4 +1,4 @@
-{% extends 'templates/template-sign.html' %}
+{% extends 'views/templates/template-sign.html' %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logIn-signUp/signUp.css') }}">
@@ -17,29 +17,31 @@
                 <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo-202-208.webp') }}" alt="Logo Application" width="100">
             </div>
             <div class="signup-form">
-                <form class="mb-3" method="post" action="/api/signUp">
+                <form class="mb-3" method="POST" action="/api/sign-up">
                     <div class="mb-3">
-                        <label for="inputEmail" class="form-label label-sign">Prénom <span class="color_7">*</span></label>
-                        <input type="text" class="form-control" name="firstName" id="inputFirstName" aria-describedby="firstNameHelp" required>
+                        <label for="inputFirstName" class="form-label label-sign">Prénom <span class="color_7">*</span></label>
+                        <input type="text" class="form-control" name="firstName" id="inputFirstName" aria-describedby="firstNameHelp" 
+                            value="{{ request.args.get('first_name', '') }}" required>
                     </div>
                     <div class="mb-3">
                         <label for="inputEmail" class="form-label label-sign">Adresse mail <span class="color_7">*</span></label>
-                        <input type="email" class="form-control" name="email" id="inputEmail" aria-describedby="emailHelp" required>
+                        <input type="email" class="form-control" name="email" id="inputEmail" aria-describedby="emailHelp" value="{{ request.args.get('email', '') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleInputPassword1" class="form-label label-sign">Mot de passe <span class="color_7">*</span></label>
+                        <label for="inputPassword" class="form-label label-sign">Mot de passe <span class="color_7">*</span></label>
                         <input type="password" class="form-control" name="password" id="inputPassword" required>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleInputPassword1" class="form-label label-sign">Cofirmer votre mot de passe <span class="color_7">*</span></label>
+                        <label for="inputPasswordConfirm" class="form-label label-sign">Confirmer votre mot de passe <span class="color_7">*</span></label>
                         <input type="password" class="form-control" name="passwordConfirm" id="inputPasswordConfirm" required>
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary">Inscription</button>
                     </div>
                 </form>
+                
                 <div class="text-center">
-                    <a href="logIn">J'ai déjà un compte</a>
+                    <a href="log-in">J'ai déjà un compte</a>
                 </div>
             </div>
         </div>

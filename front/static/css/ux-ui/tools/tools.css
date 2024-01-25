@@ -171,6 +171,17 @@
         gap: 20px;
     }
 
+    .btn-log {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 2px;
+        cursor: pointer;
+    }
+    .btn-log a {
+        text-decoration: none;
+        color: #e7e5e5;
+    }
     .btn-log-in {
         background-color: #32b961;
         padding: 5px;
@@ -178,6 +189,14 @@
         text-decoration: none;
         color: #e7e5e5;
     }
+    .btn-log-out {
+        background-color: #c3313b;
+        padding: 5px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: #e7e5e5;
+    }
+
     .navbar-nav {
         gap: 20px;
     }
@@ -188,7 +207,7 @@
     }
 
     .icon-nav { color:rgb(65, 63, 63) !important; }
-/*== END/Footer ==*/
+/*== END/Navbar ==*/
 
 /*== Footer ==*/
     .footer-containers {

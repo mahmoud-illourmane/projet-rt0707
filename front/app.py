@@ -19,6 +19,11 @@ from datetime import timedelta
 
 app = Flask(__name__)
 
+# Configuration pour les vues
+app.template_folder = 'resources'
+# Configuration pour les fichiers statiques
+app.static_folder = 'static'
+
 # Génère une clé secrète aléatoire de 32 caractères (256 bits)
 secret_key = secrets.token_hex(32)
 # Utilise la clé secrète dans la configuration de l'application Flask
@@ -32,15 +37,9 @@ app.debug = True
 # Configuration du serveur pour reload le contenu des pages web
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
-# Configuration pour les vues
-app.template_folder = 'resources'
-
-# Configuration pour les fichiers statiques
-app.static_folder = 'static'
-
 # Configuration de l'url du serveur flask back-end
-app.config['SERVER_BACK_END_URL'] = 'http://front:5000'
-app.config['SERVER_FRONT_END_URL'] = 'http://serveur:5000'
+app.config['SERVER_BACK_END_URL'] = 'http://127.0.0.1:5001'
+app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
 
 # Importations des fichier web.py et api.py
 from routes.api import *

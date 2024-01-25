@@ -3,8 +3,8 @@ from datetime import datetime
 import requests
 from flask import render_template, request, abort, redirect, url_for, flash, session
 
-from flask_login import LoginManager, login_user, login_required, logout_user
-from flask_login import current_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+
 import json
 
 from src.classes.user import User  
@@ -19,48 +19,10 @@ server_front_end_url = app.config['SERVER_FRONT_END_URL']
 |   Date: January 18, 2024
 """
 
-#
-#
-#   Web Application 
-#
-#
-
-@app.route('/', methods=['GET'])
-# @login_required
-def index():
-    if request.method == 'GET':
-        return render_template('web/index.html')
-    abort(405)
-
-@app.route('/scanner/porte', methods=['GET'])
-# @login_required
-def scannerPorte():
-    if request.method == 'GET':
-        return render_template('web/scan-porte.html')
-    abort(405)
-
-@app.route('/achat/ticket', methods=['GET'])
-# @login_required
-def achatTicket():
-    if request.method == 'GET':
-        return render_template('web/achat-ticket.html')
-    abort(405)
-
-@app.route('/gestion/ticket', methods=['GET'])
-# @login_required
-def gestionTicket():
-    if request.method == 'GET':
-        return render_template('web/gestion-ticket.html')
-    abort(405) 
-    
-    
-    
-    
-    
 # Initialisation de LoginManager
-# login_manager = LoginManager()
-# login_manager.init_app(app)
-# login_manager.login_view = 'login'
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 #
 #
@@ -69,14 +31,19 @@ def gestionTicket():
 #
 
 # Rechargement de l'utilisateur
-# @login_manager.user_loader
-# def load_user(user_id):
-#     user_info = session.get('user_info')
-#     if user_info and user_id == user_info.get('id'):
-#         return User(user_id, user_info.get('first_name'), user_info.get('email'))
-#     return None
+@login_manager.user_loader
+def load_user(user_id):
+    user_session = session.get('user_session')
+    if user_session and user_id == user_session.get('id'):
+        return User(user_id, user_session.get('first_name'), user_session.get('email'), user_session.get('role'))
+    return None
 
-@app.route('/signUp', methods=['GET'])
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash("Veuillez vous connecter pour accéder à cette page.", "error")
+    return redirect(url_for('login'))
+    
+@app.route('/sign-up', methods=['GET'])
 def signUp():
     """
     Summary:
@@ -88,40 +55,25 @@ def signUp():
     """
     
     if request.method == 'GET':
-        return render_template('signIn-signUp/signUp.html')
+        return render_template('views/signIn-signUp/signUp.html')
     
     flash('Vous devez utiliser une requête GET', 'danger')  
     return redirect(url_for('signUp'))
     
-@app.route('/logIn', methods=['GET'])
+@app.route('/log-in', methods=['GET'])
 def login():
-    if request.method == 'POST':
-        # Ici, envoie la requête à l'API du serveur back-end
-        email = request.form['email']
-        password = request.form['password']
-        
-        headers = {'Content-Type': 'application/json'}
-        api_url = f"{server_front_end_url}/api/logIn"
-        response = requests.post(api_url, json={'email': email, 'password': password}, headers=headers)
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
 
-        if response.status_code == 200:
-            response_data = response.json()
-            user = User(response_data.get('id'), response_data.get('first_name'), response_data.get('email'))
-            login_user(user)
-            # Stocker les informations dans la session
-            session['user_info'] = {'id': user.id, 'first_name': user.first_name, 'email': user.email}
-            return redirect(url_for('index'))
-        flash('L\'email ou le mot de passe est incorrect.', 'error')
-        return redirect(url_for('login'))
+    if request.method == 'GET':
+        return render_template('views/signIn-signUp/signIn.html')
 
-    return render_template('signIn-signUp/signIn.html')
-
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     logout_user()
-#     flash("Au revoir !")
-#     return redirect(url_for('login'))
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash("Au revoir !")
+    return redirect(url_for('login'))
 
 # @app.route('/deleteUser', methods=['POST'])
 # def deleteUser_():
@@ -155,8 +107,48 @@ def login():
 #             flash(error_message)
 #             return redirect(url_for('signUp')) 
  
-# @login_manager.unauthorized_handler
-# def unauthorized():
-#     flash("Veuillez vous connecter pour accéder à cette page.", "error")
-#     return redirect(url_for('login'))
+
     
+#
+#
+#   Web Application 
+#
+#
+
+#
+# Authentification required
+#
+
+@app.route('/', methods=['GET'])
+@login_required
+def index():
+    if request.method == 'GET':
+        return render_template('views/index.html')
+    abort(405)
+
+@app.route('/gestion/ticket', methods=['GET'])
+@login_required
+def gestionTicket():
+    if request.method == 'GET':
+        return render_template('views/interfaces/gestion-ticket.html')
+    abort(405) 
+
+#
+# Authentification not required
+#
+
+@app.route('/achat/ticket', methods=['GET'])
+def achatTicket():
+    if request.method == 'GET':
+        return render_template('views/interfaces/achat-ticket.html')
+    abort(405)
+    
+#
+# IOT Simulation
+#
+
+@app.route('/scanner/porte', methods=['GET'])
+def scannerPorte():
+    if request.method == 'GET':
+        return render_template('views/interfaces/scan-porte.html')
+    abort(405)

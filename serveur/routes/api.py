@@ -1,8 +1,9 @@
-from app import app            
+from app import app, DATABASE_NAME, MONGO_URI          
 from flask import jsonify, request
 import json, base64
 from pymongo.errors import PyMongoError
 from src.classes.mongoDb import MongoDBManager
+from src.classes.user import User
 
 """
 |
@@ -19,75 +20,33 @@ from src.classes.mongoDb import MongoDBManager
 |   ===============
 """
 
+# Connexion à la Base de données
+db_manager = MongoDBManager(MONGO_URI, DATABASE_NAME)
+
 #
 #   Authentification
 #
 
-@app.route('/api/signUp', methods=['POST'])
+@app.route('/api/sign-up', methods=['POST'])
 def signUp():
 
     if request.method == 'POST':
-        
-        # Récuperation des données d'inscription
         try:
+            # Récuperation des données d'inscription
             user_data = request.get_json()
-            user_info = {
-                "firstName": user_data.get('firstName'),
-                "email": user_data.get('email'),
-                "password": user_data.get('password'),
-                "role": 1
-            }
             
-            print("Utilisateur données recu : ", user_info)
-            
-            # users = db_manager.get_users()
-            # try:
-            #     users = db_manager.get_users()
-            #     resultat = users.insert_one(user_info)
-            #     print("Utilisateur inséré avec l'ID:", resultat.inserted_id)
-            # except PyMongoError as e:
-            #     print("Erreur lors de l'insertion:", e)
-    
-            # print("PRINT 1: ", users)
-            # cursor = users.find({})
-            # # Parcourez le curseur et affichez chaque document
-            # for document in cursor:
-            #     print(document)
-            
-            # # Insertion du document dans la base de données
-            # db_manager.users.insert_one(user_info)
-            # print("tous les users : ",db_manager.users.find())
-                
-            response = {
-                'status': 201,
-                'id': 1,
-                'first_name': "toto",
-                'email':"toto@toto.fr",
-            }
-            return jsonify(response), 201
-                
-            try:
-                new_user = User.register(email, password, firstName)    # Appel de la méthode qui enregistre un utilisateur
-                    
-                if 'status' in new_user and new_user['status'] == 201:  # Gestion des réponses
-                    return jsonify(new_user), 201
-                else:
-                    return jsonify(new_user), 409
-            except ValueError as e:
-                print(f"Une erreur est survenue : {e}")
-                response = {
-                    "status": 400,
-                    "message": str(e)
-                }
-            return jsonify(response), 400
+            print('donnés recus :', user_data)
         
+            new_user = User(db_manager, user_data.get('firstName'), user_data.get('email'), user_data.get('password'), 1)
+            response = new_user.createUser()
+            return response
         except Exception as e:
             return jsonify({
                 "status": 500,
                 "error": "Erreur de réception des données coté serveur."
             }), 500
         
-@app.route('/api/logIn', methods=['POST'])
+@app.route('/api/log-in', methods=['POST'])
 def logIn():
     """
         Endpoint pour l'authentification d'un utilisateur.
@@ -115,14 +74,10 @@ def logIn():
             
             email = user_data.get('email')
             password = user_data.get('password')
-            
+
             try:
-                new_user = User.authenticate_user(email, password)
-                
-                if 'status' in new_user and new_user['status'] == 200:
-                    return jsonify(new_user), 200
-                else:
-                    return jsonify(new_user), 401
+                user = User.login(db_manager, email, password)
+                return user
             except ValueError as e:
                 print(f"Une erreur est survenue : {e}")
                 response = {
@@ -137,7 +92,7 @@ def logIn():
                 "error": error_message
             }), 500
 
-@app.route('/api/deleteUser', methods=['POST'])
+@app.route('/api/delete-user', methods=['POST'])
 def deleteUser():
     """
         Endpoint pour supprimer un utilisateur.

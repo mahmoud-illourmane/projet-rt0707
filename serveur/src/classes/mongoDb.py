@@ -23,6 +23,7 @@ class MongoDBManager:
                 
                 -badges
         """
+        
         self.uri = uri
         self.database_name = database_name
 
@@ -35,7 +36,6 @@ class MongoDBManager:
             self.tickets = self.db["tickets"]
             self.ticketsJ = self.db["ticketsJ"]
             self.badges = self.db["badges"]
-            
         except PyMongoError as e:
             print(f"Erreur lors de l'établissement de la connexion à MongoDB: {e}")
             raise
@@ -49,10 +49,10 @@ class MongoDBManager:
 
     def get_collection(self, collection_name):
         """
-        Récupère une référence à une collection dans la base de données.
+            Récupère une référence à une collection dans la base de données.
 
-        :param collection_name: Nom de la collection.
-        :return: Référence à la collection.
+            :param collection_name: Nom de la collection.
+            :return: Référence à la collection.
         """
         return self.db[collection_name]
 

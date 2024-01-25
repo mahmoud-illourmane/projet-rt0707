@@ -57,8 +57,17 @@
                 </ul>
                 
                 <div class="rights-nav-btns">
-                    <a class="btn-log-in" aria-current="page" href="/logIn">Connexion</a>
-                    <a class="btn-log-in" aria-current="page" href="/signUp">Inscription</a>
+                    {% if current_user.is_authenticated %}
+                        <div class="btn-log btn-log-out">
+                            <span class="material-icons">logout</span>
+                            <a aria-current="page" href="/logout">Déconnexion</a>
+                        </div>
+                    {% else %}
+                        <div class="btn-log btn-log-in">
+                            <span class="material-icons">login</span>
+                            <a aria-current="page" href="/log-in">Connexion</a>
+                        </div>
+                    {% endif %}
 
                     <a id="mode-switcher">
                         <i class="material-icons mode-switcher-icon dark-mode-icon">brightness_3</i>
