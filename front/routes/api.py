@@ -263,7 +263,7 @@ def getGeneralsInfosUser():
         # Si l'utilisateur est authentifier on envoi son id
         if current_user.is_authenticated:
             user_id = str(current_user.id)
-
+            
         api_url = f"{server_back_end_url}/api/get/generals-infos-user"
         
         try:
@@ -280,6 +280,38 @@ def getGeneralsInfosUser():
             "status": 405,
             "error": "Vous devez utiliser une requête GET pour cette route."
     }
+
+@app.route('/api/get/tickets-user', methods=['GET'])
+@login_required
+def getAllTicketsUser():
+    if request.method == 'GET':
+        # Si l'utilisateur est authentifier on envoi son id
+        if current_user.is_authenticated:
+            user_id = str(current_user.id)
+        else:
+            response = {
+                "status": 403,
+                "error": "Vous devez être authentifié.."
+            }
+            return jsonify(response), 403 
+    
+        api_url = f"{server_back_end_url}/api/get/tickets-user"
+        
+        try:
+            response = requests.get(api_url, params={'user_id': user_id})
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête GET pour cette route."
+    }
+    return jsonify(response), 405 
 
 @app.route('/api/purchase', methods=['POST'])
 def purchase():

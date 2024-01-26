@@ -38,6 +38,12 @@
     .show-qrcode {
         color: rgb(52, 51, 49);
     }
+
+    /*== Modal Show Last ==*/
+        .qr-modal h6, .qr-modal span { 
+            color: #302f2f !important; 
+        }
+    /*== END/Modal Show Last ==*/
 /*== END/Index ==*/
 
 

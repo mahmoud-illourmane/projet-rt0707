@@ -6,7 +6,8 @@ class QRCode:
     def create_qr_code_from_json(json_data):
         """
             Crée un QR Code à partir d'une chaîne JSON et retourne l'image en Base64.
-
+            Cette méthode est idéale lors de l'achat d'un QRCODE par un utilisateur non authentifié
+            
             Args:
                 json_data (str): Données JSON à encoder dans le QR Code.
 

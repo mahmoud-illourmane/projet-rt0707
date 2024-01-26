@@ -174,6 +174,7 @@ class User:
             else:
                 last_ticket_qrcode = None
                 
+            
             return jsonify({
                 'status': 200,
                 'ticket_count': ticket_count,
@@ -185,6 +186,46 @@ class User:
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
             }), 500
          
+    @staticmethod
+    def getAllTicketsUser(db_manager, user_id):
+        """
+            Récupère tous les tickets associés à un utilisateur donné.
+
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param user_id: ID de l'utilisateur dont on veut récupérer les tickets.
+            :return: Liste des tickets de l'utilisateur ou une liste vide si aucun ticket n'est trouvé.
+        """
+        
+        try:
+            tickets_collection = db_manager.get_collection('tickets')
+            tickets = tickets_collection.find({'user_id': user_id})
+            
+            # Convertir chaque ticket en un dictionnaire et changer les ObjectId en strings
+            tickets_list = []
+            for ticket in tickets:
+                ticket_dict = dict(ticket)
+                # Convertir l'ObjectId en string
+                ticket_dict['_id'] = str(ticket_dict['_id'])
+                
+                # Générer le QR Code en Base64 pour le ticket
+                qr_code_data = QRCode.create_qr_code_with_info(ticket_dict['_id'], ticket_dict['date_achat'], ticket_dict['type'], ticket_dict['validite'], ticket_dict['etat'], ticket_dict['nb_scannes'])
+                # J'ajoute dans le dict le qr_code ainsi que les info mise dans le qr code sous forme texte. (redondante)
+                ticket_dict['qr_code'] = qr_code_data['qr_code_base64']
+                ticket_dict['qr_code_info'] = qr_code_data['ticket_info']
+
+                tickets_list.append(ticket_dict)
+
+            return jsonify({
+                'status': 200,
+                'ticket_count': len(tickets_list),
+                'tickets': tickets_list
+            }), 200
+        except Exception as e:
+            return jsonify({
+                'status': 500,
+                'error': f"Erreur lors de la récupération des tickets: {e}"
+            }), 500
+    
     @staticmethod
     def login(db_manager, email:str, password:str):
         """

@@ -7,12 +7,14 @@ $(document).ready(function() {
             dataType: 'json',                           
             success: function(response) {
                 if(response.status == 200) {
+                    // Total tickets achetés
                     $('#total-achat').text(response.ticket_count);
+
+                    // Afficher le QRCODE du dernier Ticket Acheté
                     var lastTicket = response.last_ticket_qrcode;
                     if (lastTicket) {
                         var qrCodeBase64 = response.last_ticket_qrcode.qr_code_base64;
                         var ticketInfo = lastTicket.ticket_info;
-                        
                         let elementHtml = `
                             <div class="modal-qrcode">
                                 <div class="modal-qrcode-image">
@@ -56,8 +58,7 @@ $(document).ready(function() {
                             </div>
                         `;
                         $('.qr-code-modal-index').append(elementHtml);
-                    }
-                    else {
+                    }else {
                         $('.qr-code-modal-index').append(`<span class="color_7">AUCUN QRCODE DISPONIBLE.</span>`);
                     }
                 }
@@ -91,7 +92,7 @@ $(document).ready(function() {
                 showToastMessage(errorMessage, 'text-danger');
             },
             complete: function() {
-                console.log('Requête complétée');
+                stopLoadingAnimation();
             }
         });
     } 

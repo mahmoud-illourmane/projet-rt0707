@@ -3,8 +3,8 @@ from pymongo.errors import PyMongoError
 
 class MongoDBManager:
     """
-    Classe pour gérer la connexion à une base de données MongoDB et fournir des références aux collections.
-    Utilise le modèle de context manager pour une gestion efficace des ressources.
+        Classe pour gérer la connexion à une base de données MongoDB et fournir des références aux collections.
+        Utilise le modèle de context manager pour une gestion efficace des ressources.
     """
 
     def __init__(self, uri, database_name):

@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
     /**
      * Gestionnaire d'événements pour le formulaire d'achat de tickets.
      */

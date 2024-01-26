@@ -25,6 +25,7 @@ class Ticket:
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
             }), 500
             
+        print('user id dans ticket :', self.user_id)
         # Créer le document utilisateur
         new_ticket = {
             'user_id': self.user_id,

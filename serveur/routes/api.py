@@ -147,6 +147,26 @@ def deleteUser():
 #   Web Application
 #
 
+@app.route('/api/get/tickets-user', methods=['GET'])
+def getAllTicketsUser():
+    if request.method == 'GET':
+        user_id = request.args.get('user_id', default=None, type=str)
+
+        if user_id == None:
+            response = {
+                "status": 403,
+                "error": "Aucun ID fournis."
+            }
+            return jsonify(response), 403 
+        
+        result = User.getAllTicketsUser(db_manager, user_id)
+        return result
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête GET pour cette route."
+    }
+    return jsonify(response), 405 
+
 @app.route('/api/get/generals-infos-user', methods=['GET'])
 def getGeneralsInfosUser():
     if request.method == 'GET':
@@ -176,6 +196,7 @@ def purchase():
             # Je vérifie si l'achat est effectué par un utilisateur authentifié
             if 'user_id' in data_receive:
                 user_id = data_receive['user_id']
+
         except Exception as e:
             return jsonify({
                 "status": 500, 
@@ -187,15 +208,15 @@ def purchase():
                 "status": 400, 
                 "error": 'Sélection de type invalide.'
             }), 400
-  
+
         type_ticket = data_receive['selectType']
         
         if type_ticket == 'Badge':
             validite = date_achat + datetime.timedelta(days=30)
-            new_badge = Badge(db_manager, date_achat, validite, etat, None, user_id)
+            new_badge = Badge(db_manager, date_achat, validite, etat, 0, None, user_id)
             result = new_badge.createBadge()
         else:    
-            new_ticket = Ticket(db_manager, date_achat, type_ticket, validite, etat, None, user_id)
+            new_ticket = Ticket(db_manager, date_achat, type_ticket, validite, etat, 0, None, user_id)
             result = new_ticket.createTicket()
 
         return result       

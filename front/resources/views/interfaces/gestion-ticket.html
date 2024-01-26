@@ -1,7 +1,7 @@
 {% extends 'views/templates/template-user.html' %}
 
 {% block css %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/scan-porte.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/gestion-ticket.css') }}">
 {% endblock %}
 
 {% block title %}
@@ -11,45 +11,26 @@
 {% block content %}
 <div class="container-fluid mt-3">
     <h1>Gestions de vos tickets</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Date d'achat</th>
-                <th scope="col">Date de péremption</th>
-                <th scope="col">Nombre de fois utilisé</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
+    <div class="table-responsive">
+        <table class="table table-dark table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date d'achat</th>
+                    <th scope="col">Date de péremption</th>
+                    <th scope="col">Nombre de fois utilisé</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
 
-        <tbody>
-            <tr>
-                <th scope="row">1</th>
-                <td>18/01/24 à 8h00</td>
-                <td>18/01/25 à 8h00</td>
-                <td>0</td>
-                <td>
-                    <button class="btn btn-sm btn-success btn-rounded">Afficher</button>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">2</th>
-                <td>18/01/24 à 15h00</td>
-                <td>18/01/25 à 17h00</td>
-                <td>2</td>
-                <td>
-                    <button class="btn btn-sm btn-success btn-rounded">Afficher</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+            <tbody>
+            
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
 
 {% block jsScripts %}
-    <script>
-        $(document).ready(function () {
-            stopLoadingAnimation();
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/views/interfaces/gestion-ticket.js') }}"></script>
 {% endblock %}
