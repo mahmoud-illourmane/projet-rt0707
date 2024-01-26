@@ -16,7 +16,7 @@ COPY /requirements-serveur.txt /app/
 RUN apk add --no-cache gcc musl-dev linux-headers
 
 # Installation des dépendances Python à partir du fichier requirements.txt
-RUN pip install --no-cache-dir -r requirements-serveur.txt
+RUN pip3 install --no-cache-dir -r requirements-serveur.txt
 
 # Exposition du port
 EXPOSE 5000
