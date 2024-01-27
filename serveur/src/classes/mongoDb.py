@@ -38,12 +38,36 @@ class MongoDBManager:
             raise
 
     def __enter__(self):
+        """
+            Méthode spéciale appelée lorsqu'une instance de la classe est utilisée dans un contexte `with`.
+            Retourne l'instance courante pour permettre l'utilisation des collections de la base de données.
+
+            Returns:
+                MongoDBManager: L'instance actuelle de MongoDBManager.
+        """
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+            Méthode spéciale appelée lorsqu'une instance de la classe est utilisée dans un contexte `with`.
+            Elle est responsable de la fermeture de la connexion à la base de données MongoDB.
+
+            Args:
+                exc_type (type): Le type de l'exception (le cas échéant).
+                exc_val (Exception): L'instance de l'exception (le cas échéant).
+                exc_tb (traceback): L'objet traceback (le cas échéant).
+
+            Returns:
+                None
+        """
+        
         if self.client:
             self.client.close()
-
+            
+    def close(self):
+        if self.client:
+            self.client.close()
+            
     def get_collection(self, collection_name):
         """
             Récupère une référence à une collection dans la base de données.
@@ -51,8 +75,7 @@ class MongoDBManager:
             :param collection_name: Nom de la collection.
             :return: Référence à la collection.
         """
+        
         return self.db[collection_name]
 
-    def close(self):
-        if self.client:
-            self.client.close()
+    

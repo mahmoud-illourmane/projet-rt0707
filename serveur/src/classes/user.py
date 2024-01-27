@@ -85,30 +85,33 @@ class User:
         
     def updateUser(self):
         """
-        Met à jour un user existant dans la base de données.
+            Met à jour un user existant dans la base de données.
         """
+        
         if self.id:
-            self.db_manager.get_users().update_one(
+            self.db_manager.get_collection('users').update_one(
                 {"_id": ObjectId(self.id)},
                 {"$set": {
                     "firstName": self.firstName,
                     "email": self.email,
-                    "password": self.password,  # Assurer que le mot de passe est déjà hashé.
+                    "password": self.password,  # Le mot de passe est déjà hashé.
                     "role": self.role
                 }}
             )
 
     def deleteUser(self):
         """
-        Supprime l'user de la base de données.
+            Supprime l'user de la base de données.
         """
+        
         if self.id:
-            self.db_manager.get_users().delete_one({"_id": ObjectId(self.id)})
+            self.db_manager.get_collection('users').delete_one({"_id": ObjectId(self.id)})
 
     def to_json(self):
         """
-        Retourne la représentation JSON de l'user.
+            Retourne la représentation JSON de l'user.
         """
+        
         return {
             "_id": str(self.id),
             "firstName": self.firstName,

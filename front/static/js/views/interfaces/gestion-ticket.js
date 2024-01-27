@@ -9,10 +9,10 @@ $(document).ready(function() {
                 if(response.status == 200) {
                     // Total tickets achetés
                     $('#total-ticket').text(response.ticket_count);
-
                     // Afficher le tableau des tickets
                     var tickets = response.tickets;
-                    if (tickets) {
+
+                    if (tickets && response.ticket_count != 0) {
                         // Sélectionne le 'tbody' dans ton tableau
                         var tbody = $('.table tbody');
 
@@ -25,6 +25,8 @@ $(document).ready(function() {
                             var row = `
                                 <tr>
                                     <th scope="row">${ticket._id}</th>
+                                    <td>${ticket.type}</td>
+                                    <td>${ticket.etat}</td>
                                     <td>${ticket.date_achat}</td>
                                     <td>${ticket.validite}</td>
                                     <td>${ticket.nb_scannes}</td>
@@ -91,31 +93,31 @@ $(document).ready(function() {
                                 </div>
                             `;
                             tbody.append(row);
-                            $('body').append(modal_qrcode);
+                            tbody.append(modal_qrcode);
                         });
                     }else {
-                        
+                        // Ligne pour indiquer aucun ticket
+                        var row = `
+                            <tr>
+                                <th scope="row" class="text-center" colspan="7">Aucun Ticket</th>
+                            </tr>
+                        `;
+                        var tbody = $('.table tbody');
+                        tbody.append(row);
                     }
                 }
             },
             error: function(xhr, textStatus, errorThrown) {
                 var errorMessage = 'Erreur inconnue';
-            
-                // Vérifie si la réponse contient un code de statut et un message d'erreur personnalisé
+                // Vérifier si la réponse contient un code de statut et un message d'erreur personnalisé
                 if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-                    switch (xhr.status) {
-                        case 403:
-                        case 405:
-                        case 500:
-                            errorMessage = xhr.responseJSON.error;
-                        break;
-                        default:
-                            errorMessage = "Erreur HTTP " + xhr.status + ": " + xhr.responseJSON.error;
-                    }
+                    errorMessage = xhr.responseJSON.error;
                 } else if (textStatus !== 'error') {
-                    errorMessage = textStatus;
+                    // Erreur avec un texte d'état fourni par jQuery (par exemple, "timeout", "abort", etc.)
+                    errorMessage = 'Erreur AJAX: ' + textStatus;
                 } else if (errorThrown) {
-                    errorMessage = errorThrown;
+                    // Message d'erreur par défaut fourni par le navigateur
+                    errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
                 }
                 console.log(errorMessage);
                 showToastMessage(errorMessage, 'text-danger');

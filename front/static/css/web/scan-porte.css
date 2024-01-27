@@ -68,6 +68,8 @@
         border-radius: 10%;
     }
     .red { background-color: red; }
+    .green { background-color: rgb(16, 140, 64); }
+    .green-light { background-color: rgb(74, 182, 116); }
 /*== END/Simulation Porte ==*/
 
 /*Tablettes*/

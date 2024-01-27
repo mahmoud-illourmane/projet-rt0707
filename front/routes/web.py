@@ -1,11 +1,8 @@
 from app import app
-from datetime import datetime
-import requests
+
 from flask import render_template, request, abort, redirect, url_for, flash, session
-
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-
-import json
+from functools import wraps
 
 from src.classes.user import User  
 
@@ -23,6 +20,37 @@ server_front_end_url = app.config['SERVER_FRONT_END_URL']
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+# Définissez une liste de rôles autorisés
+# 1 : User, 2 : Admin, 3 : Emp
+AUTHORIZED_ROLES = [1, 2, 3] 
+
+def roles_required(allowed_roles):
+    """
+        Cette fonction est un décorateur personnalisé pour gérer les rôles requis pour accéder à une route dans Flask.
+        
+        Args:
+            allowed_roles (list): Une liste des rôles autorisés pour accéder à la route.
+
+        Returns:
+            function: Un décorateur qui vérifie si l'utilisateur actuellement authentifié a le rôle requis.
+                    Si l'utilisateur a le bon rôle, la vue associée est exécutée normalement.
+                    Sinon, une erreur 403 (Forbidden) est renvoyée.
+    """
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if current_user.is_authenticated and current_user.role in allowed_roles:
+                return func(*args, **kwargs)
+            else:
+                return redirect(url_for('custom_403_error_page'))
+        return wrapper
+    return decorator
+
+@app.route('/custom_403_error_page')
+def custom_403_error_page():
+    return render_template('errors/403_error.html'), 403
 
 #
 #
@@ -108,7 +136,20 @@ def logout():
 #             return redirect(url_for('signUp')) 
  
 
-    
+#
+#
+#
+# Admin Application
+#
+#
+#
+
+@app.route('/admin', methods=['GET'])
+@login_required
+@roles_required([2])
+def admin_dashboard():
+    return render_template('admin/dashboard.html')
+
 #
 #
 #   Web Application 
@@ -121,6 +162,7 @@ def logout():
 
 @app.route('/', methods=['GET'])
 @login_required
+@roles_required([1, 2])
 def index():
     if request.method == 'GET':
         return render_template('views/index.html')

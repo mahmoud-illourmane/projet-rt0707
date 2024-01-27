@@ -313,6 +313,29 @@ def getAllTicketsUser():
     }
     return jsonify(response), 405 
 
+@app.route('/api/scanne/ticket', methods=['PUT'])
+def scanneTicket():
+    if request.method == 'PUT':
+        ticket = request.get_json()
+        ticket_id = ticket.get('ticket_id')
+        
+        api_url = f"{server_back_end_url}/api/scanne/ticket"
+        try:
+            response = requests.put(api_url, json=ticket_id)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405 
+
 @app.route('/api/purchase', methods=['POST'])
 def purchase():
     if request.method == 'POST':  

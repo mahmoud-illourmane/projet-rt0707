@@ -226,3 +226,20 @@ def purchase():
             "error": "Vous devez utiliser une requête POST pour cette route."
     }
     return jsonify(response), 405
+
+#
+# Simulation porte
+#
+@app.route('/api/scanne/ticket', methods=['PUT'])
+def scanneTicket():
+    if request.method == 'PUT':
+        ticket_id = request.get_json()
+
+        print('je recois :', ticket_id)
+        result = Ticket.scannerTicket(ticket_id, db_manager)
+        return result
+    response = {
+            "status": 405,
+            "error": "Vous devez utiliser une requête POST pour cette route."
+    }
+    return jsonify(response), 405

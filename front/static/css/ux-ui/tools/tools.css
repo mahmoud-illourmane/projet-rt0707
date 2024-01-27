@@ -210,6 +210,44 @@
     .icon-nav { color:rgb(65, 63, 63) !important; }
 /*== END/Navbar ==*/
 
+/*== Div Info Message ==*/
+    .info_ {
+        background-color: #17a2b8;
+    }
+    .danger_ {
+        background-color: #b8324b;
+    }
+    .div-message-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+    .div-message-info .div-info-icon span {
+        font-size: 60px;
+        color:#1e3a2c;
+        display: flex;
+        align-items: center;
+    }
+    .div-info-content p {
+        margin: 0;
+    }
+
+    /*Customization colors*/
+    .div-info-danger {
+        background-color: #c3313b !important;
+    }
+    .div-info-danger .div-info-content p {
+        color: #ab4e4e !important;
+    }
+/*== END/Div Info Message ==*/
+
 /*== Footer ==*/
     .footer-containers {
         display: flex;

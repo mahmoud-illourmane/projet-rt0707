@@ -17,6 +17,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if(response.status == 201) {
+                    $('.qr-code').empty();
                     showToastMessage(response.message, 'text-success');
                     
                     // Création de la balise img avec la source basée sur la chaîne base64 de la réponse

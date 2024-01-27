@@ -32,10 +32,10 @@ $(document).ready(function() {
                 if(response.status == 200) {
                     // Total tickets achetés
                     $('#total-ticket').text(response.ticket_count);
-
                     // Afficher le tableau des tickets
                     var tickets = response.tickets;
-                    if (tickets) {
+                    
+                    if (tickets.length > 0) {
                         // Sélectionne le 'tbody' dans ton tableau
                         var tbody = $('.table tbody');
 
@@ -48,6 +48,8 @@ $(document).ready(function() {
                             var row = `
                                 <tr>
                                     <th scope="row">${ticket._id}</th>
+                                    <th scope="row">${ticket.type}</th>
+                                    <th scope="row">${ticket.etat}</th>
                                     <td>${ticket.date_achat}</td>
                                     <td>${ticket.validite}</td>
                                     <td>${ticket.nb_scannes}</td>
@@ -62,6 +64,7 @@ $(document).ready(function() {
                                     </td>
                                 </tr>
                             `;
+
                             // Le modal qui permet d'afficher le qrcode pour chaque ticket
                             var modal_qrcode = `
                                 <div class="modal fade" id="ticketModal${ticket._id}" tabindex="-1" aria-labelledby="ticketModalLabel${ticket._id}" aria-hidden="true">
@@ -121,28 +124,28 @@ $(document).ready(function() {
                             $('body').append(modal_qrcode);
                         });
                     }else {
-                        
+                        // Ligne pour indiquer aucun ticket
+                        var row = `
+                            <tr>
+                                <th scope="row" class="text-center" colspan="7">Aucun Ticket</th>
+                            </tr>
+                        `;
+                        var tbody = $('.table tbody');
+                        tbody.append(row);
                     }
                 }
             },
             error: function(xhr, textStatus, errorThrown) {
                 var errorMessage = 'Erreur inconnue';
-            
-                // Vérifie si la réponse contient un code de statut et un message d'erreur personnalisé
+                // Vérifier si la réponse contient un code de statut et un message d'erreur personnalisé
                 if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-                    switch (xhr.status) {
-                        case 403:
-                        case 405:
-                        case 500:
-                            errorMessage = xhr.responseJSON.error;
-                        break;
-                        default:
-                            errorMessage = "Erreur HTTP " + xhr.status + ": " + xhr.responseJSON.error;
-                    }
+                    errorMessage = xhr.responseJSON.error;
                 } else if (textStatus !== 'error') {
-                    errorMessage = textStatus;
+                    // Erreur avec un texte d'état fourni par jQuery (par exemple, "timeout", "abort", etc.)
+                    errorMessage = 'Erreur AJAX: ' + textStatus;
                 } else if (errorThrown) {
-                    errorMessage = errorThrown;
+                    // Message d'erreur par défaut fourni par le navigateur
+                    errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
                 }
                 console.log(errorMessage);
                 showToastMessage(errorMessage, 'text-danger');
@@ -157,9 +160,10 @@ $(document).ready(function() {
 
     // Écoute l'événement de clic sur le bouton "Choisir" en utilisant la délégation d'événements
     $(document).on('click', '.btn[data-ticket-choice]', function() {
-        console.log('bouton cliqué');
         // Récupérez l'ID du ticket depuis l'attribut "data-ticket-choice"
         var ticketId = $(this).data('ticket-choice');
+
+        scannerTicket(ticketId);
 
         // Mettez cet ID dans l'input
         inputElement.val(ticketId);
@@ -173,4 +177,59 @@ $(document).ready(function() {
             submitButton.prop('disabled', true);
         }
     });
+
+    function toggleClassesDoor() {
+        $('.led').toggleClass('green green-light');
+    }
+
+    function scannerTicket(ticketId) {
+        var ticket = {
+            ticket_id: ticketId,
+        };
+        
+        $.ajax({
+            url: '/api/scanne/ticket',
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(ticket),
+            success: function(response) {
+                if(response.status == 200) {
+                    showToastMessage(response.message, 'text-success');
+                    $('.led').removeClass('red').addClass('green');
+
+                    // Démarre le clignotement de la porte
+                    const clignotement = setInterval(toggleClassesDoor, 500); // Alterne toutes les 500 millisecondes (0.5 seconde)
+                    // Arrête le clignotement après 2 secondes
+                    setTimeout(() => {
+                        clearInterval(clignotement); // Arrête le clignotement
+                        $('.led').removeClass('green green-light').addClass('red'); // Revenir à la classe "red"
+                        showToastMessage("Porte fermée.", 'text-danger');
+                    }, 3000);
+
+                }else {
+                    showToastMessage(response.error, 'text-danger');
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                var errorMessage = 'Erreur inconnue';
+                // Vérifier si la réponse contient un code de statut et un message d'erreur personnalisé
+                if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                } else if (textStatus !== 'error') {
+                    // Erreur avec un texte d'état fourni par jQuery (par exemple, "timeout", "abort", etc.)
+                    errorMessage = 'Erreur AJAX: ' + textStatus;
+                } else if (errorThrown) {
+                    // Message d'erreur par défaut fourni par le navigateur
+                    errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
+                }
+                console.log(errorMessage);
+                // Afficher le message d'erreur dans l'interface utilisateur, par exemple via une alerte ou un toast
+                // alert(errorMessage); // Exemple simple
+                showToastMessage(errorMessage, 'text-danger'); // Supposons que c'est une fonction personnalisée pour afficher des messages
+            },
+            complete: function() {
+                getAllTicketsUser();
+            }
+        });
+    }
 });
