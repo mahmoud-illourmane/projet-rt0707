@@ -25,6 +25,15 @@
     /*== END/Modal ==*/
 /*==== END/CONSTS ====*/
 
+/*== Settings ==*/
+    .settings-content {
+        background-color: #ece8e8;
+    }
+    .setting-item-title {
+        color: #302f2f !important;
+    }
+/*== END/Settings ==*/
+
 /*== Index ==*/
     /*== Resumes ==*/
         .resume {

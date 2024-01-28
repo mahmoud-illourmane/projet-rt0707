@@ -12,27 +12,27 @@
     <div class="container">
 
         <div class="form-container">
-            <h1 class="text-center label-sign">Inscription</h1>
+            <h1 class="text-center color_8">Inscription</h1>
             <div class="text-center">
                 <img class="nav-bar-logo" src="{{ url_for('static', filename='images/logo/logo-202-208.webp') }}" alt="Logo Application" width="100">
             </div>
             <div class="signup-form">
                 <form class="mb-3" method="POST" action="/api/sign-up">
                     <div class="mb-3">
-                        <label for="inputFirstName" class="form-label label-sign">Prénom <span class="color_7">*</span></label>
+                        <label for="inputFirstName" class="form-label color_8">Prénom <span class="color_7">*</span></label>
                         <input type="text" class="form-control" name="firstName" id="inputFirstName" aria-describedby="firstNameHelp" 
                             value="{{ request.args.get('first_name', '') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="inputEmail" class="form-label label-sign">Adresse mail <span class="color_7">*</span></label>
+                        <label for="inputEmail" class="form-label color_8">Adresse mail <span class="color_7">*</span></label>
                         <input type="email" class="form-control" name="email" id="inputEmail" aria-describedby="emailHelp" value="{{ request.args.get('email', '') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label for="inputPassword" class="form-label label-sign">Mot de passe <span class="color_7">*</span></label>
+                        <label for="inputPassword" class="form-label color_8">Mot de passe <span class="color_7">*</span></label>
                         <input type="password" class="form-control" name="password" id="inputPassword" required>
                     </div>
                     <div class="mb-3">
-                        <label for="inputPasswordConfirm" class="form-label label-sign">Confirmer votre mot de passe <span class="color_7">*</span></label>
+                        <label for="inputPasswordConfirm" class="form-label color_8">Confirmer votre mot de passe <span class="color_7">*</span></label>
                         <input type="password" class="form-control" name="passwordConfirm" id="inputPasswordConfirm" required>
                     </div>
                     <div class="d-grid">

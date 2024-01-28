@@ -68,7 +68,7 @@ class MongoDBManager:
         if self.client:
             self.client.close()
             
-    def get_collection(self, collection_name):
+    def get_collection(self, collection_name: str):
         """
             Récupère une référence à une collection dans la base de données.
 

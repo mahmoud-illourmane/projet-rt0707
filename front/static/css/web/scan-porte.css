@@ -2,6 +2,18 @@
 
 /*==== END/CONSTS ====*/
 
+/*== Tableaux & Porte ==*/
+    .operation {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-evenly;
+    }
+    .tables-tickets-badges {
+        display: flex;
+        flex-direction: column;
+    }
+/*== END/Tableaux & Porte ==*/  
+
 /*== Modal-QrCODE ==*/
     .modal-qrcode-content {
         display: flex;
@@ -27,11 +39,12 @@
 /*== Simulation input & porte ==*/
     .simulation-scan {
         display: flex;
+        flex-direction: column;
         gap: 20px;
         align-items: center;
     }
     .qr-code-input {
-        width: 50%;
+        width: 100%;
     }
 /*== END/Simulation input & porte ==*/
 
@@ -84,6 +97,17 @@
     /*==== CONSTS ====*/
 
     /*==== END/CONSTS ====*/
+
+    /*== Tableaux & Porte ==*/
+        .operation {
+            display: flex;
+            flex-direction: column;
+        }
+        .tables-tickets-badges {
+            display: flex;
+            flex-direction: column;
+        }
+    /*== END/Tableaux & Porte ==*/  
 
 
     /*== Simulation input & porte ==*/

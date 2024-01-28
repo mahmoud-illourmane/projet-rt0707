@@ -159,6 +159,9 @@ class Ticket:
                     'message': 'Porte Ouverte.',
                 }), 200 
             else:
+                update_data = {'$set': {'etat': 'P'}}
+                tickets_collection.update_one({'_id': ObjectId(ticket_id)}, update_data)
+                
                 return jsonify({
                     'status': 410,
                     'error': 'Le ticket est périmé.',
@@ -168,3 +171,5 @@ class Ticket:
                 'status': 404 ,
                 'error': 'Ticket non trouvé.',
             }), 200 
+    
+    

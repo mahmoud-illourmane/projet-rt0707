@@ -160,6 +160,7 @@ def getAllTicketsUser():
             return jsonify(response), 403 
         
         result = User.getAllTicketsUser(db_manager, user_id)
+
         return result
     response = {
         "status": 405,
@@ -230,6 +231,7 @@ def purchase():
 #
 # Simulation porte
 #
+
 @app.route('/api/scanne/ticket', methods=['PUT'])
 def scanneTicket():
     if request.method == 'PUT':
@@ -239,7 +241,76 @@ def scanneTicket():
         result = Ticket.scannerTicket(ticket_id, db_manager)
         return result
     response = {
-            "status": 405,
-            "error": "Vous devez utiliser une requête POST pour cette route."
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405
+
+@app.route('/api/scanne/badge', methods=['PUT'])
+def scanneBadge():
+    if request.method == 'PUT':
+        badge_id = request.get_json()
+
+        print('je recois :', badge_id)
+        result = Badge.scannerBadge(badge_id, db_manager)
+        return result
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405
+
+#
+#   Settings
+#
+
+@app.route('/api/settings', methods=['PUT'])
+def updateDataSettings():
+    if request.method == 'PUT':
+        data = request.get_json()
+        
+        print(data)
+        
+        operation = int(data['operation_id'])
+        user_id = str(data['user_id'])
+        
+        if operation not in [1, 2, 3]:
+            response = {
+                "status": 400,
+                "error": "Opération ID inconnue."
+            }
+            return jsonify(response), 200
+        
+        if operation == 1:
+            new_data = str(data['data'])
+            result = User.updateFirstName(db_manager, user_id, new_data)
+        elif operation == 2:
+            new_data = str(data['data'])
+            result = User.updateEmail(db_manager, user_id, new_data)
+        elif operation == 3:
+            old_password = str(data['oldPassword'])
+            new_password = str(data['newPassword'])
+            confirm_new_password = str(data['confirmPassword'])
+            result = User.updatePassword(db_manager, user_id, old_password, new_password, confirm_new_password)
+        
+        return result
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête POST pour cette route."
+    }
+    return jsonify(response), 200
+
+@app.route('/api/delete/account', methods=['POST'])
+def deleteAccount():
+    if request.method == 'POST':  
+        user_data = request.get_json()
+        user_id = user_data.get('user_id')
+            
+        result = User.deleteUser(db_manager, user_id)
+            
+        return result
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête POST pour cette route."
     }
     return jsonify(response), 405

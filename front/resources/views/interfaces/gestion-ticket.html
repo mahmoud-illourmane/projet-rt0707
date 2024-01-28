@@ -11,7 +11,7 @@
 {% block content %}
 <div class="container-fluid mt-3">
     <h1>Gestions de vos tickets</h1>
-    <h5>Total de tickets : <span id="total-ticket"></span></h5>
+    <h5>Total de tickets : <span id="total-tickets"></span></h5>
 
     <div class="div-message-info info_">
         <div class="div-info-icon">
@@ -27,7 +27,28 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-dark table-sm">
+        <table class="table table-tickets table-dark table-sm">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Type Ticket</th>
+                    <th scope="col">Etat du Ticket</th>
+                    <th scope="col">Date d'achat</th>
+                    <th scope="col">Date de péremption</th>
+                    <th scope="col">Nombre de fois utilisé</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            
+            </tbody>
+        </table>
+    </div>
+
+    <h5 class="mt-5">Total de badges : <span id="total-badges"></span></h5>
+    <div class="table-responsive">
+        <table class="table table-badges table-dark table-sm">
             <thead>
                 <tr>
                     <th scope="col">#</th>

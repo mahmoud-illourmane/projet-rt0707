@@ -2,7 +2,7 @@ from flask import jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from pymongo.errors import PyMongoError
-import datetime
+import datetime, re
 
 from src.classes.mongoDb import MongoDBManager
 from src.classes.qrCode import QRCode
@@ -10,14 +10,14 @@ from src.classes.qrCode import QRCode
 class User:
     def __init__(self, db_manager: MongoDBManager, firstName, email, password, role, id=None):
         """
-        Initialise un nouvel user ou charge un user existant.
+            Initialise un nouvel user ou charge un user existant.
 
-        :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
-        :param firstName: firstName de l'user.
-        :param email: Email de l'user.
-        :param password: Mot de passe de l'user (non hashé pour un nouveau, hashé pour un existant).
-        :param role: Rôle de l'user.
-        :param id: ID de l'user dans la base de données (pour un user existant).
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param firstName: firstName de l'user.
+            :param email: Email de l'user.
+            :param password: Mot de passe de l'user (non hashé pour un nouveau, hashé pour un existant).
+            :param role: Rôle de l'user.
+            :param id: ID de l'user dans la base de données (pour un user existant).
         """
         
         self.db_manager = db_manager
@@ -82,31 +82,7 @@ class User:
                 'status': 500,
                 'error': f"Une erreur inattendue s'est produite : {str(e)}"
             }), 500
-        
-    def updateUser(self):
-        """
-            Met à jour un user existant dans la base de données.
-        """
-        
-        if self.id:
-            self.db_manager.get_collection('users').update_one(
-                {"_id": ObjectId(self.id)},
-                {"$set": {
-                    "firstName": self.firstName,
-                    "email": self.email,
-                    "password": self.password,  # Le mot de passe est déjà hashé.
-                    "role": self.role
-                }}
-            )
-
-    def deleteUser(self):
-        """
-            Supprime l'user de la base de données.
-        """
-        
-        if self.id:
-            self.db_manager.get_collection('users').delete_one({"_id": ObjectId(self.id)})
-
+    
     def to_json(self):
         """
             Retourne la représentation JSON de l'user.
@@ -121,7 +97,183 @@ class User:
         }
 
     @staticmethod
-    def getGeneralsInfosUser(db_manager, user_id):
+    def updateFirstName(db_manager: MongoDBManager, user_id: ObjectId, new_first_name: str):
+        """
+            Met à jour le prénom d'un utilisateur dans la base de données.
+
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param user_id: ID de l'utilisateur dont le prénom doit être mis à jour.
+            :param new_first_name: Nouveau prénom à définir.
+            :return: Une réponse JSON indiquant le statut de la mise à jour du prénom.
+        """
+
+        if len(new_first_name) >= 3 and new_first_name.isalpha():
+            try:
+                result = db_manager.get_collection('users').update_one({"_id": ObjectId(user_id)}, {"$set": {"firstName": new_first_name}})
+                if result.modified_count > 0:
+                    return jsonify({
+                        'status': 200,
+                        'message': "Donnée mise à jour avec succès."
+                    }), 200
+                else:
+                    return jsonify({
+                        'status': 400,
+                        'message': "Un problème s'est produite pendant la mise à jour de la donnée."
+                    }), 200
+                
+            except PyMongoError as e:
+                return jsonify({
+                    'status': 500,
+                    'error': f"Une erreur PyMongo s'est produite : {str(e)}"
+                }), 200
+        else:
+            return jsonify({
+                'status': 400,
+                'error': "Invalid firstName. It must be at least 3 characters long and contain only letters."
+            }), 200
+
+    @staticmethod
+    def updateEmail(db_manager: MongoDBManager, user_id: ObjectId, new_email: str):
+        """
+            Met à jour l'adresse e-mail d'un utilisateur dans la base de données.
+
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param user_id: ID de l'utilisateur dont l'adresse e-mail doit être mise à jour.
+            :param new_email: Nouvelle adresse e-mail à définir.
+            :return: Une réponse JSON indiquant le statut de la mise à jour de l'adresse e-mail.
+        """
+        
+        email_regex = r"^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+        if re.match(email_regex, new_email):
+            print(new_email)
+            try:
+                result = db_manager.get_collection('users').update_one({"_id": ObjectId(user_id)}, {"$set": {"email": new_email}})
+                if result.modified_count > 0:
+                    return jsonify({
+                        'status': 200,
+                        'message': "Donnée mise à jour avec succès."
+                    }), 200
+                else:
+                    return jsonify({
+                        'status': 400,
+                        'error': "Un problème s'est produite pendant la mise à jour de la donnée."
+                    }), 200
+            except PyMongoError as e:
+                return jsonify({
+                    'status': 500,
+                    'error': f"Une erreur PyMongo s'est produite : {str(e)}"
+                }), 200
+        else:
+            return jsonify({
+                'status': 400,
+                'error': "Invalid email format."
+            }), 200
+
+    @staticmethod
+    def updatePassword(db_manager: MongoDBManager, user_id: ObjectId, old_password: str, new_password: str, confirm_password: str):
+        """
+            Met à jour le mot de passe d'un utilisateur dans la base de données.
+
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param user_id: ID de l'utilisateur dont le mot de passe doit être mis à jour.
+            :param old_password: Ancien mot de passe de l'utilisateur pour vérification.
+            :param new_password: Nouveau mot de passe à définir.
+            :param confirm_password: Confirmation du nouveau mot de passe.
+            :return: Une réponse JSON indiquant le statut de la mise à jour du mot de passe.
+        """
+
+        # Regex pour vérifier le nouveau mot de passe
+        uppercase_regex = r"[A-Z]"
+        lowercase_regex = r"[a-z]"
+        digit_regex = r"[0-9]"
+        special_char_regex = r"[#?!@$%^&*-]"
+        length_regex = r"^.{6,}$"
+
+        if new_password != confirm_password:
+            return jsonify({
+                'status': 200,
+                'error': "Le nouveau mot de passe et la confirmation du nouvau mot de passe ne sont pas identique."
+            }), 400
+             
+        # Vérifie si le nouveau mot de passe respecte les critères
+        if (re.search(uppercase_regex, new_password) and re.search(lowercase_regex, new_password) and
+            re.search(digit_regex, new_password) and re.search(special_char_regex, new_password) and
+            re.match(length_regex, new_password)):
+
+            # Récupère le mot de passe actuel depuis la base de données
+            user = db_manager.get_collection('users').find_one({"_id": ObjectId(user_id)})
+            if user and 'password' in user:
+                # Vérifie si l'ancien mot de passe est correct
+                if check_password_hash(user['password'], old_password):
+                    # Hache le nouveau mot de passe avant de l'insérer
+                    hashed_new_password = generate_password_hash(new_password)
+                    try:
+                        # Met à jour le mot de passe dans la base de données
+                        result = db_manager.get_collection('users').update_one({"_id": ObjectId(user_id)}, {"$set": {"password": hashed_new_password}})
+                        if result.modified_count > 0:
+                            return jsonify({
+                                'status': 200,
+                                'message': "Mot de passe mis à jour avec succès."
+                            }), 200
+                        else:
+                            return jsonify({
+                                'status': 400,
+                                'message': "Aucune mise à jour n'a été effectuée."
+                            }), 200
+                    except PyMongoError as e:
+                        return jsonify({
+                            'status': 500,
+                            'error': f"Une erreur PyMongo s'est produite : {str(e)}"
+                        }), 200
+                else:
+                    return jsonify({
+                        'status': 400,
+                        'error': "L'ancien mot de passe est incorrect."
+                    }), 200
+            else:
+                return jsonify({
+                    'status': 404,
+                    'error': "Utilisateur non trouvé."
+                }), 200
+        else:
+            return jsonify({
+                'status': 400,
+                'error': "Le nouveau mot de passe ne respecte pas les exigences."
+            }), 200
+
+    @staticmethod
+    def deleteUser(db_manager: MongoDBManager, user_id: ObjectId):
+        """
+            Supprime l'utilisateur et ses entrées dans les collections 'tickets' et 'badges'.
+
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :param user_id: ID de l'utilisateur à supprimer.
+        """
+
+        try:
+            # Supprime l'utilisateur de la collection 'users'
+            result = db_manager.get_collection('users').delete_one({"_id": ObjectId(user_id)})
+            if result.deleted_count > 0:
+                # Supprime les entrées correspondantes dans les collections 'tickets' et 'badges'
+                db_manager.get_collection('tickets').delete_many({"user_id": str(user_id)})
+                db_manager.get_collection('badges').delete_many({"user_id": str(user_id)})
+            else:
+                return jsonify({
+                    'status': 400,
+                    'error': "Aucun compte n'a été supprimé."
+                }), 200
+        except PyMongoError as e:
+            return jsonify({
+                'status': 500,
+                'error': f"Une erreur PyMongo s'est produite : {str(e)}"
+            }), 200
+
+        return jsonify({
+            'status': 200,
+        }), 200
+
+    @staticmethod
+    def getGeneralsInfosUser(db_manager: MongoDBManager, user_id: ObjectId):
         """
             Récupère des informations générales sur un utilisateur, notamment le nombre de tickets achetés ce mois-ci
             et le QR Code du dernier ticket acheté.
@@ -190,7 +342,7 @@ class User:
             }), 500
          
     @staticmethod
-    def getAllTicketsUser(db_manager, user_id):
+    def getAllTicketsUser(db_manager: MongoDBManager, user_id: ObjectId):
         """
             Récupère tous les tickets associés à un utilisateur donné.
 
@@ -199,6 +351,7 @@ class User:
             :return: Liste des tickets de l'utilisateur ou une liste vide si aucun ticket n'est trouvé.
         """
         
+        # Récuperation des tickets de l'utilisateur
         try:
             tickets_collection = db_manager.get_collection('tickets')
             tickets = tickets_collection.find({'user_id': user_id})
@@ -218,19 +371,47 @@ class User:
 
                 tickets_list.append(ticket_dict)
 
-            return jsonify({
-                'status': 200,
-                'ticket_count': len(tickets_list),
-                'tickets': tickets_list
-            }), 200
         except Exception as e:
             return jsonify({
                 'status': 500,
                 'error': f"Erreur lors de la récupération des tickets: {e}"
             }), 500
+            
+        # Récuperation des badges de l'utilisateur
+        try:
+            badges_collection = db_manager.get_collection('badges')
+            badges = badges_collection.find({'user_id': user_id})
+            
+            badges_list = []
+            for badge in badges:
+                badge_dict = dict(badge)
+
+                badge_dict['_id'] = str(badge_dict['_id'])
+                
+                qr_code_data = QRCode.create_qr_code_with_info(badge_dict['_id'], badge_dict['date_achat'], badge_dict['type'], badge_dict['validite'], badge_dict['etat'], badge_dict['nb_scannes'])
+                
+                badge_dict['qr_code'] = qr_code_data['qr_code_base64']
+                badge_dict['qr_code_info'] = qr_code_data['ticket_info']
+
+                badges_list.append(badge_dict)
+
+        except Exception as e:
+            return jsonify({
+                'status': 500,
+                'error': f"Erreur lors de la récupération des tickets: {e}"
+            }), 500
+
+        return jsonify({
+            'status': 200,
+            'ticket_count': len(tickets_list),
+            'tickets': tickets_list,
+            'badge_count': len(badges_list),
+            'badges': badges_list
+        }), 200
+
     
     @staticmethod
-    def login(db_manager, email:str, password:str):
+    def login(db_manager: MongoDBManager, email:str, password:str):
         """
             Authentifie un utilisateur en vérifiant l'email et le mot de passe dans la base de données.
 

@@ -103,39 +103,6 @@ def logout():
     flash("Au revoir !")
     return redirect(url_for('login'))
 
-# @app.route('/deleteUser', methods=['POST'])
-# def deleteUser_():
-#     """_summary_
-#     Cette méthode se charge de supprimer un utilisateur
-    
-#     Returns:
-#         _type_: une réponse Json
-#     """
-    
-#     if request.method == 'POST':
-        
-#         if current_user.is_authenticated:
-#             user_id = current_user.id
-
-#         headers = {'Content-Type': 'application/json'}
-#         api_url = f"{server_front_end_url}/api/deleteUser"
-        
-#         try:
-#             response = requests.post(api_url, json={"user_id": user_id}, headers=headers)
-#             response.raise_for_status()
-#             if response.status_code == 204:
-#                 logout_user()
-#                 flash("Votre compte a bien été supprimé")
-#                 return redirect(url_for('login'))
-            
-#             flash("Une erreur s'est produite pendant la suppression.")
-#             return redirect(url_for('/'))
-#         except requests.exceptions.RequestException as e:
-#             error_message = f"Erreur de requête vers l'URL distante 78: {str(e)}"
-#             flash(error_message)
-#             return redirect(url_for('signUp')) 
- 
-
 #
 #
 #
@@ -173,6 +140,13 @@ def index():
 def gestionTicket():
     if request.method == 'GET':
         return render_template('views/interfaces/gestion-ticket.html')
+    abort(405) 
+
+@app.route('/settings', methods=['GET'])
+@login_required
+def settings():
+    if request.method == 'GET':
+        return render_template('views/setting/setting.html')
     abort(405) 
 
 #

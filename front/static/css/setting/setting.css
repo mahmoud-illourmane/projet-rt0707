@@ -1,0 +1,109 @@
+/*==== CONSTS ====*/
+    .setting-active {
+        background-color: rgb(200, 181, 223);
+        padding: 10px;
+        border-radius: 10px;
+    }
+/*==== END/CONSTS ====*/
+
+/*== Mains divs view ==*/
+    /*Le div principal*/
+    .settings-content {
+        display: flex;
+        border: 1px solid rgb(90, 90, 90);
+        border-radius: 20px;
+        min-height: 350px;
+    }
+    /*La liste des paramètres*/
+    .settings-items {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 20%;
+        
+        padding: 10px 11px 0px 0px;
+        border-right: 1px solid black;
+    }
+    /* Un lien qui ouvre le contenu de ce paramètre */
+    .setting-item {
+        display: flex;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    /* Le contenu des listes de paramètre */
+    .settings-items-content {
+        width: 80%;
+        padding: 10px;
+    }
+/*== END/Mains divs view ==*/
+
+/*== setting-item-content ==*/
+    .last-firt-name-input{
+        width: 30%;
+    }
+    .email-input {
+        width: 50%;
+    }
+/*== END/setting-item-content ==*/
+
+/* Form update password */
+    .form-update-password {
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .password_rules {
+        background-color: aliceblue;
+        padding: 10px;
+        border-radius: 10px;
+    }
+/* END/Form update password */
+
+/*Tablettes*/
+@media all  and (min-width: 601px) and (max-width: 1023px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}
+
+/*Smartphones*/
+@media all  and (max-width: 600px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+
+    /*== Mains divs view ==*/
+        /*Le div principal*/
+        .settings-content {
+            display: flex;
+            flex-direction: column;
+        }
+        /*La liste des paramètres*/
+        .settings-items {
+            width: 100%;
+            border-right: none;
+        }
+        /* Le contenu des listes de paramètre */
+        .settings-items-content {
+            width: 100%;
+
+        }
+    /*== END/Mains divs view ==*/
+
+    /*== setting-item-content ==*/
+        .last-firt-name-input{
+            width: 100%;
+        }
+        .email-input {
+            width: 100%;
+        }
+    /*== END/setting-item-content ==*/
+
+    /* Form update password */
+        .form-update-password {
+            width: 100%;
+
+        }
+    /* END/Form update password */
+}

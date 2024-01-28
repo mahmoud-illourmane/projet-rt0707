@@ -56,6 +56,12 @@
                         <span class="material-icons icon-nav">qr_code</span>
                         <a class="nav-link active" aria-current="page" href="/scanner/porte">Scanner une porte</a>
                     </li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="material-icons icon-nav">settings</span>
+                            <a class="nav-link active" aria-current="page" href="/settings">Paramètres</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 
                 <div class="rights-nav-btns">

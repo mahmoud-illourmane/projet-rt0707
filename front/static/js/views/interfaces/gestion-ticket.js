@@ -7,14 +7,13 @@ $(document).ready(function() {
             dataType: 'json',                           
             success: function(response) {
                 if(response.status == 200) {
-                    // Total tickets achetés
-                    $('#total-ticket').text(response.ticket_count);
-                    // Afficher le tableau des tickets
-                    var tickets = response.tickets;
 
+                    // Affichage des tickets
+                    $('#total-tickets').text(response.ticket_count);
+                    var tickets = response.tickets;
                     if (tickets && response.ticket_count != 0) {
                         // Sélectionne le 'tbody' dans ton tableau
-                        var tbody = $('.table tbody');
+                        var tbody = $('.table-tickets tbody');
 
                         // Vide le 'tbody' pour s'assurer qu'il n'y a pas de lignes précédentes
                         tbody.empty();
@@ -103,6 +102,95 @@ $(document).ready(function() {
                             </tr>
                         `;
                         var tbody = $('.table tbody');
+                        tbody.append(row);
+                    }
+
+                    // Total badges achetés
+                    $('#total-badges').text(response.badge_count);
+                    var badges = response.badges;
+                    if (badges && response.badge_count != 0) {
+                        // Sélectionnez le 'tbody' dans votre tableau
+                        var tbody = $('.table-badges tbody');
+                    
+                        // Videz le 'tbody' pour vous assurer qu'il n'y a pas de lignes précédentes
+                        tbody.empty();
+                    
+                        // Remplissez le 'tbody' avec de nouvelles lignes pour chaque badge
+                        $.each(badges, function(index, badge) {
+                            // Une nouvelle ligne pour chaque badge
+                            var row = `
+                                <tr>
+                                    <th scope="row">${badge._id}</th>
+                                    <td>${badge.type}</td>
+                                    <td>${badge.etat}</td>
+                                    <td>${badge.date_achat}</td>
+                                    <td>${badge.validite}</td>
+                                    <td>${badge.nb_scannes}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-success btn-rounded" data-bs-toggle="modal" data-bs-target="#badgeModal${badge._id}">
+                                            Afficher
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                            // Le modal qui permet d'afficher le QR code pour chaque badge
+                            var modal_qrcode = `
+                                <div class="modal fade" id="badgeModal${badge._id}" tabindex="-1" aria-labelledby="badgeModalLabel${badge._id}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="badgeModalLabel">Détails du Badge</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="modal-qrcode">
+                                                    <div class="modal-qrcode-image">
+                                                        <img src="data:image/png;base64,${badge.qr_code}" width="200"/>
+                                                    </div>
+                    
+                                                    <div class="modal-qrcode-content">
+                                                        <div class="qr-code-id qr-modal">
+                                                            <span class="material-icons">widgets</span>
+                                                            <h6>Identification : ${badge.qr_code_info.id}</h6>
+                                                        </div>
+                                                        <div class="date-creation qr-modal">
+                                                            <span class="material-icons">calendar_month</span>
+                                                            <h6>Date de création : ${badge.qr_code_info.date_achat}</h6>
+                                                        </div>
+                                                        <div class="type-ticket-badge qr-modal">
+                                                            <span class="material-icons">token</span>
+                                                            <h6>Type Badge : ${badge.qr_code_info.type}</h6>
+                                                        </div>
+                                                        <div class="date-validite qr-modal">
+                                                            <span class="material-icons">hourglass_bottom</span>
+                                                            <h6>Date d'expiration : ${badge.qr_code_info.validite}</h6>
+                                                        </div>
+                                                        <div class="date-validite qr-modal">
+                                                            <span class="material-icons">history</span>
+                                                            <h6>Etat du badge : ${badge.qr_code_info.etat}</h6>
+                                                        </div>
+                                                        <div class="date-validite qr-modal">
+                                                            <span class="material-icons">functions</span>
+                                                            <h6>Nombre de scannes : ${badge.qr_code_info.nb_scannes}</h6>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            tbody.append(row);
+                            tbody.append(modal_qrcode);
+                        });
+                    } else {
+                        // Ligne pour indiquer aucun badge
+                        var row = `
+                            <tr>
+                                <th scope="row" class="text-center" colspan="7">Aucun Badge</th>
+                            </tr>
+                        `;
+                        var tbody = $('.table-badges tbody');
                         tbody.append(row);
                     }
                 }

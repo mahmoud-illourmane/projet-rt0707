@@ -291,7 +291,7 @@ def getAllTicketsUser():
         else:
             response = {
                 "status": 403,
-                "error": "Vous devez être authentifié.."
+                "error": "Vous devez être authentifié."
             }
             return jsonify(response), 403 
     
@@ -300,6 +300,7 @@ def getAllTicketsUser():
         try:
             response = requests.get(api_url, params={'user_id': user_id})
             response.raise_for_status()
+            
             return response.json()
         except requests.exceptions.RequestException as e:
             error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
@@ -322,6 +323,29 @@ def scanneTicket():
         api_url = f"{server_back_end_url}/api/scanne/ticket"
         try:
             response = requests.put(api_url, json=ticket_id)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405 
+
+@app.route('/api/scanne/badge', methods=['PUT'])
+def scanneBadge():
+    if request.method == 'PUT':
+        badge = request.get_json()
+        badge_id = badge.get('badge_id')
+        
+        api_url = f"{server_back_end_url}/api/scanne/badge"
+        try:
+            response = requests.put(api_url, json=badge_id)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -361,3 +385,71 @@ def purchase():
             "status": 405,
             "error": "Vous devez utiliser une requête POST pour cette route."
     }
+
+#
+#
+#
+#   Settings View
+#
+#
+#
+
+@app.route('/api/settings', methods=['PUT'])
+@login_required
+def updateDataSettings():
+    if request.method == 'PUT':
+        data = request.get_json()
+        
+        # Si l'utilisateur est authentifier j'ajoute son id
+        if current_user.is_authenticated:
+            data['user_id'] = str(current_user.id)
+        else:
+            return jsonify({
+                "status": 500, 
+                "error": "Aucun ID trouvé pour l'utilisateur."
+            }), 500
+
+        api_url = f"{server_back_end_url}/api/settings"
+        try:
+            response = requests.put(api_url, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405 
+
+@app.route('/api/delete/account', methods=['POST'])
+@login_required
+def deleteAccount():
+    if request.method == 'POST':
+        if current_user.is_authenticated:
+            user_id = current_user.id
+        else:
+            flash('Une erreur pendant la récupération de votre ID.', 'error')  
+            return redirect(url_for('settings'))
+        
+        api_url = f"{server_back_end_url}/api/delete/account"
+        try:
+            response = requests.post(api_url, json={'user_id': user_id})
+            response.raise_for_status()
+            if(response.status_code  == 200):
+                flash('Votre compte à bien été supprimé', 'error')  
+                return redirect(url_for('signUp'))
+            
+            flash('Une erreur s\'est produite pendant la suppression.', 'error')  
+            return redirect(url_for('settings'))
+        except requests.exceptions.RequestException as e:
+            flash(f"Erreur de requête vers l'URL distante 1: {str(e)}", 'error')  
+            return redirect(url_for('settings'))
+            
+    flash('Vous devez utiliser une requête POST', 'error')  
+    return redirect(url_for('settings'))
+

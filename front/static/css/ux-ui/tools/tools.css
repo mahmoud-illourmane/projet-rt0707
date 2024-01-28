@@ -334,6 +334,14 @@
 
     /*==== CONST/End ====*/
 
+    /*== Div Info Message ==*/
+        .div-message-info {
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    /*== END/Div Info Message ==*/
+
     /*== Footer ==*/
         .footer-containers {
             display: flex;

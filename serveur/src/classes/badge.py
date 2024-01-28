@@ -1,6 +1,9 @@
 from flask import jsonify
 from pymongo.errors import PyMongoError
-import datetime, json
+from bson import ObjectId
+
+from datetime import datetime, timedelta
+import json
 
 from src.classes.mongoDb import MongoDBManager
 from src.classes.qrCode import QRCode
@@ -101,5 +104,61 @@ class Badge:
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
             }), 500
             
+    @staticmethod
+    def scannerBadge(badge_id:str, db_manager: MongoDBManager):
+        """
+            Scanner un badge dans la base de données.
+
+            Cette méthode prend en entrée l'ID du badge à scanner et un gestionnaire de base de données MongoDB.
+
+            Args:
+                badge_id (str): L'ID du badge à scanner.
+                db_manager (MongoDBManager): Le gestionnaire de la base de données MongoDB.
+
+            Returns:
+                tuple: Un tuple contenant la réponse JSON et le code de statut HTTP.
+        """
+    
+        # Obtenir la référence à la collection 'badges'
+        badges_collection = db_manager.get_collection('badges')
         
+        badge = badges_collection.find_one({'_id': ObjectId(badge_id)})
         
+        if badge:
+            # Je vérifie si la date de validité du badge est supérieure à la date actuelle
+            if datetime.now() < badge['validite']:
+                # Incrémentation de la valeur nb_scannes de 1
+                update_data = {'$inc': {'nb_scannes': 1}}
+                # Initialisation de '$set' pour éviter d'écraser les modifications précédentes
+                update_data['$set'] = {}
+
+                # Deuxième vérification : l'état du badge
+                if badge['etat'] == "N":
+                    # Mise à jour de l'état à "V"
+                    update_data['$set']['etat'] = 'V'
+                    # Mise à jour de la validité pour 30 jours
+                    new_validite = datetime.now() + timedelta(days=30)
+                    # Mise à jour de la validité dans '$set'
+                    update_data['$set']['validite'] = new_validite
+                
+                # Mise à jour du badge dans la base de données
+                badges_collection.update_one({'_id': ObjectId(badge_id)}, update_data)
+                
+                return jsonify({
+                    'status': 200,
+                    'message': 'Porte Ouverte.',
+                }), 200 
+            else:
+                update_data = {'$set': {'etat': 'P'}}
+                badges_collection.update_one({'_id': ObjectId(badge_id)}, update_data)
+                
+                return jsonify({
+                    'status': 410,
+                    'error': 'Le badge est périmé.',
+                }), 200
+            
+        else:
+            return jsonify({
+                'status': 404 ,
+                'error': 'Badge non trouvé.',
+            }), 200     

@@ -1,0 +1,199 @@
+{% extends 'views/templates/template-user.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/setting/setting.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Paramètres</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="container settings-content">
+        <!-- La liste des menus disponible -->
+        <div class="settings-items">
+            <div type="button" class="setting-item-div" data-bs-toggle="collapse" data-bs-target="#generalInfo" aria-expanded="false" aria-controls="generalInfo">
+                <div class="setting-item">
+                    <div class="setting-item-icon">
+                        <span class="material-icons color_1">manage_accounts</span>
+                    </div>
+                    <div class="setting-item-title">
+                        Compte
+                    </div>
+                </div>
+            </div>
+
+            <div type="button" class="setting-item-div" data-bs-toggle="collapse" data-bs-target="#password" aria-expanded="false" aria-controls="password">
+                <div class="setting-item ">
+                    <div class="setting-item-icon">
+                        <span class="material-icons color_1">lock</span>
+                    </div>
+                    <div class="setting-item-title">
+                        Mot de passe
+                    </div>
+                </div>
+            </div>
+
+            <div type="button" class="setting-item-div" data-bs-toggle="collapse" data-bs-target="#deleteAccount" aria-expanded="false" aria-controls="deleteAccount">
+                <div class="setting-item color_7">
+                    <div class="setting-item-icon">
+                        <span class="material-icons">delete</span>
+                    </div>
+                    <div class="setting-item-title">
+                        Supprimer le compte
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-items-content">
+            <!-- Personnels information update -->
+            <div class="setting-item-content">
+                <div class="collapse" id="generalInfo">
+                    <h4>Informations général</h4>
+
+                    <div class="div-message-info info_">
+                        <div class="div-info-icon">
+                            <span class="material-icons">info</span>
+                        </div>
+                        <div class="div-info-content">
+                            <p>
+                                Pour voir les modifications vous devez vous déconnecter.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="rows-infos mt-3">
+
+                        <!-- Last name update -->
+                        <div class="row-info mt-3">
+                            <div class="user-info">
+                                <label for="exampleFormControlInput1" class="form-label">NOM</label>
+                                <div class="last-firt-name-input">
+                                    <input type="text" class="form-control info-input" name="last_name" placeholder="{{ current_user.first_name }}">
+                                    <div class="operations">
+                                        <a type="button" class="material-icons edit-operation color_3">edit</a>
+                                        <a type="button" class="material-icons confirm-operation color_8">done</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email update -->
+                        <div class="row-info mt-3">
+                            <div class="user-info">
+                                <label for="exampleFormControlInput1" class="form-label">ADRESSE MAIL</label>
+
+                                <div class="email-input">
+                                    <input type="text" class="form-control info-input" name="email" placeholder="{{ current_user.email }}">
+                                    <div class="operations">
+                                        <a type="button" class="material-icons edit-operation color_3">edit</a>
+                                        <a type="button" class="material-icons confirm-operation color_8">done</a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Password update -->
+            <div id="password-update" class="setting-item-content">
+                
+                <div class="collapse" id="password">
+
+                    <div class="form-update-password">
+                        
+                        <form id="formulaire" class="needs-validation" novalidate>
+
+                            <div class="has-validation">
+                                <label class="form-label mt-2">Mot de passe actuel <strong class="color_7">*</strong></label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text material-icons">lock</span>
+                                    <input id="oldPassword" type="password" class="form-control password-field" name="oldPassword" required>
+                                    <span type="button" class="input-group-text material-icons showPasswordBtn">visibility</span>
+                                    <div class="invalid-feedback">Champ nécessaire !</div>
+                                </div>
+                                
+                                <!-- Indication du mot de passe -->
+                                <div class="password_rules mb-3 mt-3" id="passwordRules">
+                                    <div class="p-r"><span id="uppercaseRule">Lettre majuscule</span></div>
+                                    <div class="p-r"><span id="lowercaseRule">Lettre minuscule</span></div>
+                                    <div class="p-r"><span id="digitRule">Chiffre</span></div>
+                                    <div class="p-r"><span id="specialCharRule">Caractère spécial (#?!@$%^&*-)</span></div>
+                                    <div class="p-r"><span id="lengthRule">Au moins 8 caractères</span></div>
+                                </div>
+
+                                <label class="form-label">Nouveau mot de passe <strong class="color_7">*</strong></label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text material-icons">lock</span>
+                                    <input id="newPassword" type="password" class="form-control password-field" name="newPassword" required>
+                                    <span type="button" class="input-group-text material-icons showPasswordBtn">visibility</span>
+                                    <div class="invalid-feedback">Champ nécessaire !</div>
+                                </div>
+                                
+                                <label>Confirmer votre mot de passe <strong class="color_7">*</strong></label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text material-icons">lock</span>
+                                    <input id="confirmPassword" type="password" class="form-control password-field" name="confirmPassword" required>
+                                    <span type="button" class="input-group-text material-icons showPasswordBtn">visibility</span>
+                                    <div class="invalid-feedback">Champ nécessaire !</div>
+                                </div>
+                            </div>
+                            <div class="text-center d-grid gap-2">
+                                <button id="btnSubmitPasswordUpdate" type="submit" class="btn btn-rounded btn-primary text-center">
+                                    <span id="spinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                                    Mettre à jour votre mot de passe
+                                </button>
+                            </div>                            
+                        </form>
+                    </div>   
+                </div>
+            </div>
+
+            <!-- Delete account -->
+            <div class="setting-item-content">
+                <div class="collapse" id="deleteAccount">
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-danger d-flex gap-2" data-bs-toggle="modal" data-bs-target="#modalConfirmDeleteAccount">
+                        <span class="material-icons color_6">delete</span>
+                        Supprimer mon compte
+                    </button>
+                    
+                    <!-- Modal Confirm delete-->
+                    <div class="modal fade" id="modalConfirmDeleteAccount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalConfirmDeleteAccount" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">Confirmer la suppression de votre compte</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="deleteAccountForm" action="/api/delete/account" method="POST">
+                                    <div class="modal-body text-center">
+                                        <p>
+                                            <strong>Cette action est irréversible.</strong>
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                        <button type="submit" class="btn btn-danger btn-confirm-delete-account d-flex gap-2">
+                                            <span class="material-icons color_6">delete</span>
+                                            Supprimer mon Compte
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script src="{{ url_for('static', filename='js/views/setting/setting.js') }}"></script>
+{% endblock %}

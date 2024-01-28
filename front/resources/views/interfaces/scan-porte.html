@@ -10,7 +10,7 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
-    <h1>Scanne de porte</h1>
+    <h1>Scan de porte</h1>
     
     <div class="div-message-info info_">
         <div class="div-info-icon">
@@ -26,26 +26,54 @@
     </div>
     
     <div class="operation">
-        <div class="tickets">
-            <h4>Choissisez un ticket si vous en avez</h4>
-            <div class="table-responsive">
-                <table class="table table-dark table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Type Ticket</th>
-                            <th scope="col">Etat du Ticket</th>
-                            <th scope="col">Date d'achat</th>
-                            <th scope="col">Date de péremption</th>
-                            <th scope="col">Nombre de fois utilisé</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-        
-                    <tbody>
-                    
-                    </tbody>
-                </table>
+
+        <div class="tables-tickets-badges">
+            <!-- Tableau des tickets -->
+            <div class="tickets">
+                <h4>Choissisez un ticket si vous en avez <span id="total-tickets"></span></h4>
+                <div class="table-responsive">
+                    <table class="table table-tickets table-dark table-sm">
+                        <thead class="text-center">
+                            <tr>
+                                <th scope="col">Id</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Etat</th>
+                                <th scope="col">Date d'achat</th>
+                                <th scope="col">Date Péremption</th>
+                                <th scope="col">Nombres de scans</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+            
+                        <tbody class="text-center">
+                        
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tableau des badges -->
+            <div class="badges mt-5">
+                <h4>Choissisez un badge si vous en avez <span id="total-badges"></span></h4>
+                <div class="table-responsive">
+                    <table class="table table-badges table-dark table-sm">
+                        <thead class="text-center">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Etat</th>
+                                <th scope="col">Date d'achat</th>
+                                <th scope="col">Date Péremption</th>
+                                <th scope="col">Nombres de scans</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+            
+                        <tbody class="text-center">
+                        
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
             
