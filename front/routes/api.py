@@ -1,8 +1,7 @@
 from app import app
 from flask import request, redirect, url_for, flash, session, jsonify
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager, login_user, login_required, current_user
 
-import json
 import requests
 from functools import wraps
 
@@ -19,11 +18,10 @@ from src.classes.user import User
 
 # Accède à la variable globale depuis la configuration Flask
 server_back_end_url = app.config['SERVER_BACK_END_URL']
+server_door_url = app.config['SERVER_DOOR_URL']
 
 #
-#
 #   Authentification
-#
 #
 
 # if current_user.is_authenticated:
@@ -385,7 +383,7 @@ def getAllTicketsUser():
                 "status": 403,
                 "error": "Vous devez être authentifié."
             }
-            return jsonify(response), 403 
+            return jsonify(response), 200 
     
         api_url = f"{server_back_end_url}/api/get/tickets-user"
         
@@ -403,94 +401,6 @@ def getAllTicketsUser():
     response = {
         "status": 405,
         "error": "Vous devez utiliser une requête GET pour cette route."
-    }
-    return jsonify(response), 405 
-
-@app.route('/api/scanne/ticket', methods=['PUT'])
-def scanneTicket():
-    """
-        Marque un ticket comme scanné en utilisant une requête PUT.
-
-        Cette route permet de marquer un ticket spécifié comme scanné en utilisant une requête PUT.
-        Elle nécessite l'envoi d'un JSON contenant l'identifiant du ticket à marquer comme scanné.
-
-        Args:
-            Aucun argument n'est requis dans la fonction.
-
-        Returns:
-            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
-            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
-            avec un message d'erreur approprié.
-
-        Raises:
-            Aucune exception n'est levée dans cette fonction.
-
-        Exemple d'utilisation:
-            Pour marquer un ticket comme scanné, envoyez une requête PUT à cette route avec un JSON contenant l'identifiant du ticket.
-    """
-    
-    if request.method == 'PUT':
-        ticket = request.get_json()
-        ticket_id = ticket.get('ticket_id')
-        
-        api_url = f"{server_back_end_url}/api/scanne/ticket"
-        try:
-            response = requests.put(api_url, json=ticket_id)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
-            return jsonify({
-                "status": 500, 
-                "error": error_message
-            }), 500
-    response = {
-        "status": 405,
-        "error": "Vous devez utiliser une requête PUT pour cette route."
-    }
-    return jsonify(response), 405 
-
-@app.route('/api/scanne/badge', methods=['PUT'])
-def scanneBadge():
-    """
-        Marque un badge comme scanné en utilisant une requête PUT.
-
-        Cette route permet de marquer un badge spécifié comme scanné en utilisant une requête PUT.
-        Elle nécessite l'envoi d'un JSON contenant l'identifiant du badge à marquer comme scanné.
-
-        Args:
-            Aucun argument n'est requis dans la fonction.
-
-        Returns:
-            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
-            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
-            avec un message d'erreur approprié.
-
-        Raises:
-            Aucune exception n'est levée dans cette fonction.
-
-        Exemple d'utilisation:
-            Pour marquer un badge comme scanné, envoyez une requête PUT à cette route avec un JSON contenant l'identifiant du badge.
-    """
-    
-    if request.method == 'PUT':
-        badge = request.get_json()
-        badge_id = badge.get('badge_id')
-        
-        api_url = f"{server_back_end_url}/api/scanne/badge"
-        try:
-            response = requests.put(api_url, json=badge_id)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
-            return jsonify({
-                "status": 500, 
-                "error": error_message
-            }), 500
-    response = {
-        "status": 405,
-        "error": "Vous devez utiliser une requête PUT pour cette route."
     }
     return jsonify(response), 405 
 
@@ -654,6 +564,126 @@ def deleteAccount():
             
     flash('Vous devez utiliser une requête POST', 'error')  
     return redirect(url_for('settings'))
+
+
+#
+#
+#   Iot Simulation
+#
+#
+
+@app.route('/api/scanne/ticket', methods=['PUT'])
+def scanneTicket():
+    """
+        Marque un ticket comme scanné en utilisant une requête PUT.
+
+        Cette route permet de marquer un ticket spécifié comme scanné en utilisant une requête PUT.
+        Elle nécessite l'envoi d'un JSON contenant l'identifiant du ticket à marquer comme scanné.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour marquer un ticket comme scanné, envoyez une requête PUT à cette route avec un JSON contenant l'identifiant du ticket.
+    """
+    
+    if request.method == 'PUT':
+        ticket = request.get_json()
+        ticket_id = ticket.get('ticket_id')
+        
+        api_url = f"{server_back_end_url}/api/scanne/ticket"
+        try:
+            response = requests.put(api_url, json=ticket_id)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405 
+
+@app.route('/api/scanne/badge', methods=['PUT'])
+def scanneBadge():
+    """
+        Marque un badge comme scanné en utilisant une requête PUT.
+
+        Cette route permet de marquer un badge spécifié comme scanné en utilisant une requête PUT.
+        Elle nécessite l'envoi d'un JSON contenant l'identifiant du badge à marquer comme scanné.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour marquer un badge comme scanné, envoyez une requête PUT à cette route avec un JSON contenant l'identifiant du badge.
+    """
+    
+    if request.method == 'PUT':
+        badge = request.get_json()
+        badge_id = badge.get('badge_id')
+        
+        api_url = f"{server_back_end_url}/api/scanne/badge"
+        try:
+            response = requests.put(api_url, json=badge_id)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête PUT pour cette route."
+    }
+    return jsonify(response), 405 
+
+@app.route('/api/send/request/open/door', methods=['POST'])
+@login_required
+def sendRequestOpenDoor():
+    
+    if request.method == 'POST':
+        data  = request.get_json()
+
+        api_url = f"{server_door_url}/door/publish"
+        try:
+            response = requests.post(api_url, json=data)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête POST pour cette route."
+    }
+    return jsonify(response), 200 
+
 
 #
 #

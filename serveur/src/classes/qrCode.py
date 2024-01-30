@@ -1,7 +1,6 @@
 import qrcode, io, base64, json
 
 class QRCode:
-
     @staticmethod
     def create_qr_code_from_json(json_data):
         """
@@ -48,7 +47,7 @@ class QRCode:
         return img_base64  
 
     @staticmethod
-    def create_qr_code_with_info(id, date_achat, type, validite, etat, nb_scannes):
+    def create_qr_code_with_info(id, date_achat, type, validite):
         """
             Crée un QR Code avec les informations du ticket et retourne l'image en Base64 
             et les informations de création.
@@ -70,8 +69,6 @@ class QRCode:
             'date_achat': date_achat.strftime('%Y-%m-%d %H:%M:%S'),
             'type': type,
             'validite': validite.strftime('%Y-%m-%d %H:%M:%S'),
-            'etat': etat,
-            'nb_scannes': nb_scannes
         }
 
         # Convertit les données du ticket en chaîne JSON

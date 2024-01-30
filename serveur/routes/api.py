@@ -205,7 +205,7 @@ def getAllTicketsUser():
                 "status": 403,
                 "error": "Aucun ID fournis."
             }
-            return jsonify(response), 403 
+            return jsonify(response), 200 
         
         result = User.getAllTicketsUser(db_manager, user_id)
 
@@ -214,7 +214,7 @@ def getAllTicketsUser():
         "status": 405,
         "error": "Vous devez utiliser une requête GET pour cette route."
     }
-    return jsonify(response), 405 
+    return jsonify(response), 200
 
 @app.route('/api/get/generals-infos-user', methods=['GET'])
 def getGeneralsInfosUser():
@@ -248,7 +248,7 @@ def getGeneralsInfosUser():
         "status": 405,
         "error": "Vous devez utiliser une requête POST pour cette route."
     }
-    return jsonify(response), 405 
+    return jsonify(response), 200
 
 @app.route('/api/purchase', methods=['POST'])
 def purchase():
@@ -345,9 +345,9 @@ def scanneTicket():
     """
     
     if request.method == 'PUT':
-        ticket_id = request.get_json()
-
-        print('je recois :', ticket_id)
+        data = request.get_json()
+ 
+        ticket_id = data['qrId']
         result = Ticket.scannerTicket(ticket_id, db_manager)
         return result
     response = {
@@ -378,10 +378,11 @@ def scanneBadge():
     """
     
     if request.method == 'PUT':
-        badge_id = request.get_json()
+        data = request.get_json()
 
-        print('je recois :', badge_id)
+        badge_id = data['qrId']
         result = Badge.scannerBadge(badge_id, db_manager)
+        print('j\'ai recu', badge_id)
         return result
     response = {
         "status": 405,

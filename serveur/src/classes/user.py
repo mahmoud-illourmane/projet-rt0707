@@ -81,12 +81,12 @@ class User:
             return jsonify({
                 'status': 500,
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
-            }), 500
+            }), 200
         except Exception as e:
             return jsonify({
                 'status': 500,
                 'error': f"Une erreur inattendue s'est produite : {str(e)}"
-            }), 500
+            }), 200
     
     def to_json(self):
         """
@@ -315,7 +315,7 @@ class User:
             return jsonify({
                 'status': 500,
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
-            }), 500
+            }), 200
 
         # Obtenir la date de début du mois actuel en UTC
         today_utc = datetime.datetime.utcnow()
@@ -355,7 +355,7 @@ class User:
             return jsonify({
                 'status': 500,
                 'error': f"Une erreur PyMongo s'est produite : {str(e)}"
-            }), 500
+            }), 200
          
     @staticmethod
     def getAllTicketsUser(db_manager: MongoDBManager, user_id: ObjectId):
@@ -380,7 +380,7 @@ class User:
                 ticket_dict['_id'] = str(ticket_dict['_id'])
                 
                 # Générer le QR Code en Base64 pour le ticket
-                qr_code_data = QRCode.create_qr_code_with_info(ticket_dict['_id'], ticket_dict['date_achat'], ticket_dict['type'], ticket_dict['validite'], ticket_dict['etat'], ticket_dict['nb_scannes'])
+                qr_code_data = QRCode.create_qr_code_with_info(ticket_dict['_id'], ticket_dict['date_achat'], ticket_dict['type'], ticket_dict['validite'])
                 # J'ajoute dans le dict le qr_code ainsi que les info mise dans le qr code sous forme texte. (redondante)
                 ticket_dict['qr_code'] = qr_code_data['qr_code_base64']
                 ticket_dict['qr_code_info'] = qr_code_data['ticket_info']
@@ -391,7 +391,7 @@ class User:
             return jsonify({
                 'status': 500,
                 'error': f"Erreur lors de la récupération des tickets: {e}"
-            }), 500
+            }), 200
             
         # Récuperation des badges de l'utilisateur
         try:
@@ -404,7 +404,7 @@ class User:
 
                 badge_dict['_id'] = str(badge_dict['_id'])
                 
-                qr_code_data = QRCode.create_qr_code_with_info(badge_dict['_id'], badge_dict['date_achat'], badge_dict['type'], badge_dict['validite'], badge_dict['etat'], badge_dict['nb_scannes'])
+                qr_code_data = QRCode.create_qr_code_with_info(badge_dict['_id'], badge_dict['date_achat'], badge_dict['type'], badge_dict['validite'])
                 
                 badge_dict['qr_code'] = qr_code_data['qr_code_base64']
                 badge_dict['qr_code_info'] = qr_code_data['ticket_info']
@@ -415,7 +415,7 @@ class User:
             return jsonify({
                 'status': 500,
                 'error': f"Erreur lors de la récupération des tickets: {e}"
-            }), 500
+            }), 200
 
         return jsonify({
             'status': 200,
@@ -539,5 +539,5 @@ class User:
             return jsonify({
                 'status': 200,
                 'error': str(e)
-            }), 500
+            }), 200
         

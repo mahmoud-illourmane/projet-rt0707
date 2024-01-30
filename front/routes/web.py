@@ -1,7 +1,7 @@
 from app import app
 
-from flask import render_template, request, abort, redirect, url_for, flash, session
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask import render_template, request, redirect, url_for, flash, session
+from flask_login import LoginManager, login_required, logout_user, current_user
 from functools import wraps
 
 from src.classes.user import User  

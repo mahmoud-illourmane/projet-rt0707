@@ -117,6 +117,10 @@ class Badge:
 
             Returns:
                 tuple: Un tuple contenant la réponse JSON et le code de statut HTTP.
+                404 : Badge non trouvé
+                410 : Badge Périmé
+                200 : Porte ouverte
+                
         """
     
         # Obtenir la référence à la collection 'badges'
@@ -155,10 +159,10 @@ class Badge:
                 return jsonify({
                     'status': 410,
                     'error': 'Le badge est périmé.',
-                }), 200
+                }), 410
             
         else:
             return jsonify({
                 'status': 404 ,
                 'error': 'Badge non trouvé.',
-            }), 200     
+            }), 404     

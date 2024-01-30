@@ -23,7 +23,6 @@ app.debug = True
 
 app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
 
-
 # Récupération des variables d'environnement pour la connexion MongoDB en mode VM
 MONGO_USERNAME = 'mongoadmin'
 MONGO_PASSWORD = 'secret'

@@ -165,11 +165,11 @@ class Ticket:
                 return jsonify({
                     'status': 410,
                     'error': 'Le ticket est périmé.',
-                }), 200
+                }), 410
         else:
             return jsonify({
                 'status': 404 ,
                 'error': 'Ticket non trouvé.',
-            }), 200 
+            }), 404 
     
     

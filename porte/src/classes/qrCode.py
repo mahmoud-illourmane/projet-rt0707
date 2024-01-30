@@ -35,6 +35,7 @@ class QRCode:
         # Extraire les données JSON du QR Code
         if decoded_data:
             json_data = decoded_data[0].data.decode("utf-8")
+            print(json_data)
             return json.loads(json_data)
 
         return None

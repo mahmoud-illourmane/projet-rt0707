@@ -38,6 +38,7 @@ app.debug = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 # Configuration de l'url du serveur flask back-end
+app.config['SERVER_DOOR_URL'] = 'http://127.0.0.1:5002'
 app.config['SERVER_BACK_END_URL'] = 'http://127.0.0.1:5001'
 app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
 

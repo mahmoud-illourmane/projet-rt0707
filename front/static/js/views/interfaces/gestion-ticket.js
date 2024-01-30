@@ -14,6 +14,7 @@ $(document).ready(function() {
                     if (tickets && response.ticket_count != 0) {
                         // Sélectionne le 'tbody' dans ton tableau
                         var tbody = $('.table-tickets tbody');
+                        var body = $('.table-responsive');
 
                         // Vide le 'tbody' pour s'assurer qu'il n'y a pas de lignes précédentes
                         tbody.empty();
@@ -60,31 +61,15 @@ $(document).ready(function() {
                                                             <span class="material-icons">calendar_month</span>
                                                             <h6>Date de création : ${ticket.qr_code_info.date_achat}</h6>
                                                         </div>
-                                                        <div class="type-ticket-badge qr-modal">
-                                                            <span class="material-icons">token</span>
-                                                            <h6>Type Ticket : ${ticket.qr_code_info.type}</h6>
-                                                        </div>
                                                         <div class="date-validite qr-modal">
                                                             <span class="material-icons">hourglass_bottom</span>
                                                             <h6>Date d'expiration : ${ticket.qr_code_info.validite}</h6>
                                                         </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">history</span>
-                                                            <h6>Etat du ticket : ${ticket.qr_code_info.etat}</h6>
-                                                        </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">functions</span>
-                                                            <h6>Nombre de scannes : ${ticket.qr_code_info.nb_scannes}</h6>
+                                                        <div class="type-ticket-badge qr-modal">
+                                                            <span class="material-icons">token</span>
+                                                            <h6>Type Ticket : ${ticket.qr_code_info.type}</h6>
                                                         </div>
                                                     </div>
-                    
-                                                    <p>
-                                                        N : Jamais utilisé
-                                                        <br>
-                                                        P : Périmé
-                                                        <br>
-                                                        V : En voyage
-                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -92,7 +77,7 @@ $(document).ready(function() {
                                 </div>
                             `;
                             tbody.append(row);
-                            tbody.append(modal_qrcode);
+                            body.append(modal_qrcode);
                         });
                     }else {
                         // Ligne pour indiquer aucun ticket
@@ -111,7 +96,8 @@ $(document).ready(function() {
                     if (badges && response.badge_count != 0) {
                         // Sélectionnez le 'tbody' dans votre tableau
                         var tbody = $('.table-badges tbody');
-                    
+                        var body = $('.table-responsive');
+
                         // Videz le 'tbody' pour vous assurer qu'il n'y a pas de lignes précédentes
                         tbody.empty();
                     
@@ -157,21 +143,13 @@ $(document).ready(function() {
                                                             <span class="material-icons">calendar_month</span>
                                                             <h6>Date de création : ${badge.qr_code_info.date_achat}</h6>
                                                         </div>
-                                                        <div class="type-ticket-badge qr-modal">
-                                                            <span class="material-icons">token</span>
-                                                            <h6>Type Badge : ${badge.qr_code_info.type}</h6>
-                                                        </div>
                                                         <div class="date-validite qr-modal">
                                                             <span class="material-icons">hourglass_bottom</span>
                                                             <h6>Date d'expiration : ${badge.qr_code_info.validite}</h6>
                                                         </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">history</span>
-                                                            <h6>Etat du badge : ${badge.qr_code_info.etat}</h6>
-                                                        </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">functions</span>
-                                                            <h6>Nombre de scannes : ${badge.qr_code_info.nb_scannes}</h6>
+                                                        <div class="type-ticket-badge qr-modal">
+                                                            <span class="material-icons">token</span>
+                                                            <h6>Type Badge : ${badge.qr_code_info.type}</h6>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -181,7 +159,7 @@ $(document).ready(function() {
                                 </div>
                             `;
                             tbody.append(row);
-                            tbody.append(modal_qrcode);
+                            body.append(modal_qrcode);
                         });
                     } else {
                         // Ligne pour indiquer aucun badge
@@ -193,6 +171,9 @@ $(document).ready(function() {
                         var tbody = $('.table-badges tbody');
                         tbody.append(row);
                     }
+                }
+                else {
+                    showToastMessage(response.error, 'text-danger');
                 }
             },
             error: function(xhr, textStatus, errorThrown) {

@@ -55,7 +55,6 @@ $(document).ready(function() {
             dataType: 'json',                           
             success: function(response) {
                 if(response.status == 200) {
-
                     // Affichage des tickets sur le tableau des tickets
                     $('#total-tickets').text(response.ticket_count);
                     var tickets = response.tickets;
@@ -81,7 +80,7 @@ $(document).ready(function() {
                                             Afficher
                                         </button>
                         
-                                        <button type="button" class="btn btn-sm btn-primary btn-rounded btn-scan" data-choice-type=${ticket.type} data-ticket-choice=${ticket._id}>
+                                        <button type="button" class="btn btn-sm btn-primary btn-rounded btn-scan" data-choice-type=${ticket.type} data-titre-qrcode=${ticket.qr_code} data-ticket-choice=${ticket._id}>
                                             Scanner
                                         </button>
                                     </td>
@@ -112,31 +111,15 @@ $(document).ready(function() {
                                                             <span class="material-icons">calendar_month</span>
                                                             <h6>Date de création : ${ticket.qr_code_info.date_achat}</h6>
                                                         </div>
-                                                        <div class="type-ticket-ticket qr-modal">
-                                                            <span class="material-icons">token</span>
-                                                            <h6>Type Ticket : ${ticket.qr_code_info.type}</h6>
-                                                        </div>
                                                         <div class="date-validite qr-modal">
                                                             <span class="material-icons">hourglass_bottom</span>
                                                             <h6>Date d'expiration : ${ticket.qr_code_info.validite}</h6>
                                                         </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">history</span>
-                                                            <h6>Etat du ticket : ${ticket.qr_code_info.etat}</h6>
-                                                        </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">functions</span>
-                                                            <h6>Nombre de scannes : ${ticket.qr_code_info.nb_scannes}</h6>
+                                                        <div class="type-ticket qr-modal">
+                                                            <span class="material-icons color_8">token</span>
+                                                            <h6>Type Ticket : ${ticket.qr_code_info.type}</h6>
                                                         </div>
                                                     </div>
-                                    
-                                                    <p>
-                                                        N : Jamais utilisé
-                                                        <br>
-                                                        P : Périmé
-                                                        <br>
-                                                        V : En voyage
-                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -148,13 +131,15 @@ $(document).ready(function() {
                         });
                         
                     }else {
+                        var tbody = $('.table-tickets tbody');
+                        tbody.empty();
+
                         // Ligne pour indiquer aucun ticket
                         var row = `
                             <tr>
                                 <th scope="row" class="text-center" colspan="7">Aucun Ticket</th>
                             </tr>
                         `;
-                        var tbody = $('.table-tickets tbody');
                         tbody.append(row);
                     }
 
@@ -183,7 +168,7 @@ $(document).ready(function() {
                                             Afficher
                                         </button>
 
-                                        <button type="button" class="btn btn-sm btn-primary btn-rounded btn-scan" data-choice-type=${badge.type} data-badge-choice=${badge._id}>
+                                        <button type="button" class="btn btn-sm btn-primary btn-rounded btn-scan" data-choice-type=${badge.type} data-titre-qrCode=${badge.qr_code} data-badge-choice=${badge._id}>
                                             Scanner
                                         </button>
                                     </td>
@@ -213,31 +198,15 @@ $(document).ready(function() {
                                                             <span class="material-icons">calendar_month</span>
                                                             <h6>Date de création : ${badge.qr_code_info.date_achat}</h6>
                                                         </div>
-                                                        <div class="type-ticket-badge qr-modal">
-                                                            <span class="material-icons">token</span>
-                                                            <h6>Type Badge : ${badge.qr_code_info.type}</h6>
-                                                        </div>
                                                         <div class="date-validite qr-modal">
                                                             <span class="material-icons">hourglass_bottom</span>
                                                             <h6>Date d'expiration : ${badge.qr_code_info.validite}</h6>
                                                         </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">history</span>
-                                                            <h6>Etat du badge : ${badge.qr_code_info.etat}</h6>
-                                                        </div>
-                                                        <div class="date-validite qr-modal">
-                                                            <span class="material-icons">functions</span>
-                                                            <h6>Nombre de scannes : ${badge.qr_code_info.nb_scannes}</h6>
+                                                        <div class="type-ticket-badge qr-modal">
+                                                            <span class="material-icons">token</span>
+                                                            <h6>Type Badge : ${badge.qr_code_info.type}</h6>
                                                         </div>
                                                     </div>
-                                    
-                                                    <p>
-                                                        N : Jamais utilisé
-                                                        <br>
-                                                        P : Périmé
-                                                        <br>
-                                                        V : En voyage
-                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -248,15 +217,21 @@ $(document).ready(function() {
                             $('body').append(modal_qrcode);
                         });
                     } else {
+                        var tbody = $('.table-badges tbody');
+                        tbody.empty();
+
                         // Ligne pour indiquer aucun badge
                         var row = `
                             <tr>
                                 <th scope="row" class="text-center" colspan="7">Aucun Badge</th>
                             </tr>
                         `;
-                        var tbody = $('.table-badges tbody');
+                        
                         tbody.append(row);
                     }
+                }
+                else {
+                    showToastMessage(response.error, 'text-danger');
                 }
             },
             error: function(xhr, textStatus, errorThrown) {
@@ -288,19 +263,22 @@ $(document).ready(function() {
         // Récupère l'ID et le type depuis les attributs data
         var choiceId = $(this).data('badge-choice') || $(this).data('ticket-choice');
         var choiceType = $(this).data('choice-type');
-        
+        var qrCode = $(this).data('titre-qrcode');
+
+        requetePOST(qrCode);
+
         // Appele la fonction appropriée en fonction du type
-        if (choiceType === '1J' || choiceType === '2H') {
-            scannerTicket(choiceId);
-        } else if (choiceType === 'Badge') {
-            scannerBadge(choiceId);
-        }
+        // if (choiceType === '1J' || choiceType === '2H') {
+        //     scannerTicket(choiceId);
+        // } else if (choiceType === 'Badge') {
+        //     scannerBadge(choiceId);
+        // }
         
         // Mettre l'ID dans l'input
-        inputElement.val(choiceId);
+        // inputElement.val(choiceId);
         
         // Vérifie à nouveau la longueur de l'id
-        checkInputLengthAndToggleSubmitButton();
+        // checkInputLengthAndToggleSubmitButton();
     });
     
     /**
@@ -403,4 +381,55 @@ $(document).ready(function() {
             }
         });
     }
+
+    function requetePOST(qrCodeBase64) {    
+        // Données à envoyer dans la requête POST
+        var donnees = {
+            qrCodeBase64: qrCodeBase64,
+        };
+            
+        // Envoi de la requête AJAX avec les données préparées
+        $.ajax({
+            url: '/api/send/request/open/door',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(donnees),
+            dataType: 'json',
+            success: function(response) {
+                if(response.status == 200) {
+                    console.log(response.data);
+                    $("#print-result").html(response.data);
+                    showToastMessage(response.message, 'text-success');
+                }else {
+                    showToastMessage(response.error, 'text-danger');
+                }
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                var errorMessage = 'Erreur inconnue';
+    
+                // Vérifie si la réponse est du JSON
+                if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                } else if (xhr.status) {
+                    // Si la réponse n'est pas du JSON, utilise le statut HTTP
+                    errorMessage = "Erreur HTTP " + xhr.status + ": " + (errorThrown ? errorThrown : "Erreur inconnue");
+                } else if (textStatus !== 'error') {
+                    // Erreur avec un texte d'état fourni par jQuery
+                    errorMessage = textStatus;
+                } else if (errorThrown) {
+                    // Message d'erreur par défaut fourni par le navigateur
+                    errorMessage = errorThrown;
+                }
+    
+                console.log(errorMessage);
+            },
+            complete: function() {
+                console.log('Requête complétée');
+                $('.btn-scan').prop('disabled', false);
+            }
+        });
+    }
+
+    
 });
+
