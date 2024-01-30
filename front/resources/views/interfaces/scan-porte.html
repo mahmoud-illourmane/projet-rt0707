@@ -1,4 +1,10 @@
-{% extends 'views/templates/template-user.html' %}
+{% if current_user.role == 1 %}
+    {% extends 'views/templates/template-user.html' %}
+{% elif current_user.role == 2 %}
+    {% extends 'views/templates/template-admin.html' %}
+{% else %}
+    {% extends 'views/templates/template-emp.html' %}
+{% endif %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/web/scan-porte.css') }}">

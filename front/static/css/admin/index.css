@@ -1,0 +1,17 @@
+/*==== CONSTS ====*/
+
+/*==== END/CONSTS ====*/
+
+/*Tablettes*/
+@media all  and (min-width: 601px) and (max-width: 1023px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}
+
+/*Smartphones*/
+@media all  and (max-width: 600px){
+    /*==== CONSTS ====*/
+
+    /*==== END/CONSTS ====*/
+}

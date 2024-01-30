@@ -4,6 +4,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 
 import json
 import requests
+from functools import wraps
 
 from src.classes.user import User
 
@@ -32,6 +33,33 @@ server_back_end_url = app.config['SERVER_BACK_END_URL']
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+# Définissez une liste de rôles autorisés
+# 1 : User, 2 : Admin, 3 : Emp
+AUTHORIZED_ROLES = [1, 2, 3] 
+
+def roles_required(allowed_roles):
+    """
+        Cette fonction est un décorateur personnalisé pour gérer les rôles requis pour accéder à une route dans Flask.
+        
+        Args:
+            allowed_roles (list): Une liste des rôles autorisés pour accéder à la route.
+
+        Returns:
+            function: Un décorateur qui vérifie si l'utilisateur actuellement authentifié a le rôle requis.
+                    Si l'utilisateur a le bon rôle, la vue associée est exécutée normalement.
+                    Sinon, une erreur 403 (Forbidden) est renvoyée.
+    """
+    
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if current_user.is_authenticated and current_user.role in allowed_roles:
+                return func(*args, **kwargs)
+            else:
+                return redirect(url_for('custom_403_error_page'))
+        return wrapper
+    return decorator
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -177,8 +205,12 @@ def handleLogIn():
                         'role': user.get_role()
                     }
                     
+                    # Redirection de l'utilisateur vers la vue appropriée
                     flash('Bienvenue', 'success')  
-                    return redirect(url_for('index'))
+                    if int(current_user.role) == 1:
+                        return redirect(url_for('index'))
+                    elif int(current_user.role) == 2:
+                        return redirect(url_for('admin_dashboard'))
                 else:
                     flash('Une erreur s\'est produite.', 'error')  
                     return redirect(url_for('login'))
@@ -202,11 +234,27 @@ def handleLogIn():
 
 @app.route('/api/deleteUser', methods=['POST'])
 def deleteUser():
-    """_summary_
-    Cette méthode se charge de supprimer un utilisateur
-    
-    Returns:
-        _type_: une réponse Json
+    """
+        Supprime un utilisateur en utilisant une requête POST.
+
+        Cette route permet de supprimer un utilisateur en envoyant une requête POST
+        contenant un objet JSON avec la clé "user_id" pour identifier l'utilisateur à supprimer.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la suppression réussit, la fonction retourne un code de statut 204 (No Content).
+            - Si la suppression échoue, la fonction retourne un code de statut 400 (Bad Request).
+            - Si une erreur inattendue se produit lors de la communication avec le serveur Backend,
+            la fonction retourne un code de statut 500 (Internal Server Error) avec un message d'erreur.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour supprimer un utilisateur, envoyez une requête POST à cette route avec un objet JSON
+            contenant la clé "user_id" spécifiant l'identifiant de l'utilisateur à supprimer.
     """
     
     if request.method == 'POST':                                                # Je vérifi que la requête a bien été faite avec POST
@@ -258,6 +306,27 @@ def deleteUser():
 @app.route('/api/get/generals-infos-user', methods=['GET'])
 @login_required
 def getGeneralsInfosUser():
+    """
+        Récupère les informations générales de l'utilisateur en utilisant une requête GET.
+
+        Cette route permet de récupérer les informations générales de l'utilisateur actuellement authentifié.
+        Elle nécessite une authentification préalable, ce qui signifie que l'utilisateur doit être connecté.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si l'utilisateur est authentifié, la fonction retourne les informations générales de l'utilisateur au format JSON.
+            - Si l'utilisateur n'est pas authentifié, la fonction retourne un code de statut 405 (Method Not Allowed)
+            avec un message d'erreur indiquant que seule une requête GET est autorisée.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour récupérer les informations générales de l'utilisateur actuellement authentifié, envoyez une requête GET à cette route.
+    """
+    
     if request.method == 'GET':  
         
         # Si l'utilisateur est authentifier on envoi son id
@@ -284,6 +353,29 @@ def getGeneralsInfosUser():
 @app.route('/api/get/tickets-user', methods=['GET'])
 @login_required
 def getAllTicketsUser():
+    """
+        Récupère tous les tickets de l'utilisateur en utilisant une requête GET.
+
+        Cette route permet de récupérer tous les tickets de l'utilisateur actuellement authentifié.
+        Elle nécessite une authentification préalable, ce qui signifie que l'utilisateur doit être connecté.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si l'utilisateur est authentifié, la fonction retourne la liste de tous les tickets de l'utilisateur au format JSON.
+            - Si l'utilisateur n'est pas authentifié, la fonction retourne un code de statut 403 (Forbidden)
+            avec un message d'erreur indiquant que l'authentification est requise.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour récupérer tous les tickets de l'utilisateur actuellement authentifié, envoyez une requête GET à cette route.
+    """
+    
     if request.method == 'GET':
         # Si l'utilisateur est authentifier on envoi son id
         if current_user.is_authenticated:
@@ -316,6 +408,27 @@ def getAllTicketsUser():
 
 @app.route('/api/scanne/ticket', methods=['PUT'])
 def scanneTicket():
+    """
+        Marque un ticket comme scanné en utilisant une requête PUT.
+
+        Cette route permet de marquer un ticket spécifié comme scanné en utilisant une requête PUT.
+        Elle nécessite l'envoi d'un JSON contenant l'identifiant du ticket à marquer comme scanné.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour marquer un ticket comme scanné, envoyez une requête PUT à cette route avec un JSON contenant l'identifiant du ticket.
+    """
+    
     if request.method == 'PUT':
         ticket = request.get_json()
         ticket_id = ticket.get('ticket_id')
@@ -339,6 +452,27 @@ def scanneTicket():
 
 @app.route('/api/scanne/badge', methods=['PUT'])
 def scanneBadge():
+    """
+        Marque un badge comme scanné en utilisant une requête PUT.
+
+        Cette route permet de marquer un badge spécifié comme scanné en utilisant une requête PUT.
+        Elle nécessite l'envoi d'un JSON contenant l'identifiant du badge à marquer comme scanné.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour marquer un badge comme scanné, envoyez une requête PUT à cette route avec un JSON contenant l'identifiant du badge.
+    """
+    
     if request.method == 'PUT':
         badge = request.get_json()
         badge_id = badge.get('badge_id')
@@ -362,6 +496,28 @@ def scanneBadge():
 
 @app.route('/api/purchase', methods=['POST'])
 def purchase():
+    """
+        Effectue un achat en utilisant une requête POST.
+
+        Cette route permet à un utilisateur d'effectuer un achat en envoyant une requête POST avec les données d'achat au serveur distant.
+        Si l'utilisateur est authentifié, son identifiant est ajouté aux données d'achat.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête POST réussit, la fonction retourne la réponse du serveur distant au format JSON.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour effectuer un achat, envoyez une requête POST à cette route avec les données d'achat au format JSON.
+            Si l'utilisateur est authentifié, assurez-vous d'inclure son identifiant dans les données.
+    """
+    
     if request.method == 'POST':  
         data = request.get_json()
         
@@ -388,15 +544,36 @@ def purchase():
 
 #
 #
-#
-#   Settings View
-#
+#   Settings Pannel
 #
 #
 
 @app.route('/api/settings', methods=['PUT'])
 @login_required
 def updateDataSettings():
+    """
+        Met à jour les paramètres utilisateur en utilisant une requête PUT.
+
+        Cette route permet à un utilisateur authentifié de mettre à jour ses paramètres en envoyant une requête PUT avec les données de mise à jour
+        au serveur distant. L'identifiant de l'utilisateur est ajouté aux données de mise à jour s'il est authentifié.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête PUT réussit, la fonction retourne la réponse du serveur distant au format JSON.
+            - Si l'utilisateur n'est pas authentifié, la fonction retourne un code de statut 500 (Internal Server Error) avec un message d'erreur.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction retourne un code de statut 500 (Internal Server Error)
+            avec un message d'erreur approprié.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour mettre à jour les paramètres, envoyez une requête PUT à cette route avec les données de mise à jour au format JSON.
+            Assurez-vous d'inclure l'identifiant de l'utilisateur dans les données si l'utilisateur est authentifié.
+    """
+
     if request.method == 'PUT':
         data = request.get_json()
         
@@ -429,6 +606,30 @@ def updateDataSettings():
 @app.route('/api/delete/account', methods=['POST'])
 @login_required
 def deleteAccount():
+    """
+        Supprime le compte utilisateur en utilisant une requête POST.
+
+        Cette route permet à un utilisateur authentifié de supprimer son compte en envoyant une requête POST au serveur distant avec son identifiant.
+        Après la suppression du compte, la session de l'utilisateur est également effacée.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête POST réussit et retourne un code de statut 200, la fonction efface la session de l'utilisateur, affiche un message de
+            confirmation et redirige l'utilisateur vers la page d'inscription.
+            - Si l'utilisateur n'est pas authentifié, la fonction affiche un message d'erreur et redirige l'utilisateur vers la page des paramètres.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction affiche un message d'erreur approprié et redirige
+            l'utilisateur vers la page des paramètres.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour supprimer un compte, envoyez une requête POST à cette route avec l'identifiant de l'utilisateur dans les données JSON.
+            Si la suppression réussit, l'utilisateur sera redirigé vers la page d'inscription avec un message de confirmation.
+    """
+    
     if request.method == 'POST':
         if current_user.is_authenticated:
             user_id = current_user.id
@@ -441,6 +642,7 @@ def deleteAccount():
             response = requests.post(api_url, json={'user_id': user_id})
             response.raise_for_status()
             if(response.status_code  == 200):
+                session.clear()
                 flash('Votre compte à bien été supprimé', 'error')  
                 return redirect(url_for('signUp'))
             
@@ -453,3 +655,107 @@ def deleteAccount():
     flash('Vous devez utiliser une requête POST', 'error')  
     return redirect(url_for('settings'))
 
+#
+#
+#   Admin Pannel
+#
+#
+
+@app.route('/api/admin/get/all-users', methods=['GET'])
+@login_required
+@roles_required([2])
+def getAdminAllUsers():
+    """
+        Récupère toutes les informations des utilisateurs avec le rôle 1 pour le panneau d'administration.
+
+        Cette route permet à un administrateur authentifié d'obtenir les informations de tous les utilisateurs ayant le rôle 1
+        pour le panneau d'administration. Les informations sont obtenues en effectuant une requête GET vers un serveur distant.
+
+        Args:
+            Aucun argument n'est requis dans la fonction.
+
+        Returns:
+            - Si la requête GET réussit et retourne un code de statut 200, la fonction renvoie les informations des utilisateurs sous
+            forme de JSON.
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction renvoie un message d'erreur JSON approprié
+            avec un code de statut 500.
+            - Si l'utilisateur n'est pas un administrateur (rôle 2), la fonction renvoie un message d'erreur JSON avec un code de statut 403.
+            - Si la méthode HTTP n'est pas GET, la fonction renvoie un message d'erreur JSON avec un code de statut 405.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Un administrateur peut accéder à cette route en effectuant une requête GET. Si la requête réussit, il recevra les informations
+            des utilisateurs avec le rôle 1 pour le panneau d'administration.
+    """
+
+    if request.method == 'GET':
+        api_url = f"{server_back_end_url}/api/admin/get/all-users"
+        
+        try:
+            response = requests.get(api_url)
+            response.raise_for_status()
+            
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            error_message = f"Erreur de requête vers l'URL distante : {str(e)}"
+            return jsonify({
+                "status": 500, 
+                "error": error_message
+            }), 500
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête GET pour cette route."
+    }
+    return jsonify(response), 405 
+
+@app.route('/api/admin/delete/account', methods=['POST'])
+@login_required
+@roles_required([2])
+def adminDeleteAccount():
+    """
+        Supprime un compte utilisateur en tant qu'administrateur.
+
+        Cette route permet à un administrateur authentifié de supprimer un compte utilisateur en effectuant une requête POST vers
+        un serveur distant.
+
+        Args:
+            Aucun argument n'est requis dans la fonction. Les données du compte utilisateur à supprimer sont envoyées via une requête JSON.
+
+        Returns:
+            - Si la requête POST réussit et retourne un code de statut 200, la fonction renvoie les données de réponse JSON du serveur distant,
+            y compris le message "Utilisateur supprimé".
+            - Si une erreur se produit lors de la requête vers le serveur distant, la fonction renvoie un message d'erreur JSON approprié
+            avec un code de statut 500.
+            - Si l'utilisateur n'est pas un administrateur (rôle 2), la fonction renvoie un message d'erreur JSON avec un code de statut 403.
+            - Si la méthode HTTP n'est pas POST, la fonction renvoie un message d'erreur JSON avec un code de statut 405.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Un administrateur peut accéder à cette route en effectuant une requête POST avec les données du compte utilisateur à supprimer.
+            Si la requête réussit, le compte utilisateur est supprimé, et la réponse JSON contient le message "Utilisateur supprimé".
+    """
+
+    if request.method == 'POST':
+        data = request.get_json()
+        user_id = data['user_id']
+        print(user_id)
+        
+        api_url = f"{server_back_end_url}/api/delete/account"
+        try:
+            response = requests.post(api_url, json={'user_id': user_id})
+            response.raise_for_status()
+            if(response.status_code  == 200):
+                response_data = response.json()
+                response_data['message'] = 'Utilisateur supprimé.'
+                return response_data
+            
+        except requests.exceptions.RequestException as e:
+            flash(f"Erreur de requête vers l'URL distante 1: {str(e)}", 'error')  
+            return redirect(url_for('settings'))
+            
+    flash('Vous devez utiliser une requête POST', 'error')  
+    return redirect(url_for('settings'))

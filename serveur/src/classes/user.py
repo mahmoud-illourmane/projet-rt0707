@@ -450,3 +450,94 @@ class User:
         return jsonify({
             'status': 401,
         }), 401
+
+    #
+    #   Admin Pannel
+    #
+    
+    @staticmethod
+    def getAdminAllUsers(db_manager):
+        """
+            Récupère toutes les informations des utilisateurs avec le rôle 1 pour le panneau d'administration.
+
+            :param db_manager: Instance de MongoDBManager pour interagir avec la base de données.
+            :return: Liste des utilisateurs avec des informations agrégées sur les tickets et les badges.
+        """
+
+        try:
+            users_collection = db_manager.get_collection('users')
+            tickets_collection = db_manager.get_collection('tickets')
+            badges_collection = db_manager.get_collection('badges')
+
+            # Agrégation pour les tickets
+            pipeline_tickets = [
+                {
+                    "$group": {
+                        "_id": "$user_id",
+                        "total_tickets": {"$sum": 1},  # Compte le total des tickets par utilisateur
+                        "N_tickets": {
+                            "$sum": {"$cond": [{"$eq": ["$etat", "N"]}, 1, 0]}  # Compte les tickets en état "N"
+                        },
+                        "V_tickets": {
+                            "$sum": {"$cond": [{"$eq": ["$etat", "V"]}, 1, 0]}  # Compte les tickets en état "V"
+                        },
+                        "P_tickets": {
+                            "$sum": {"$cond": [{"$eq": ["$etat", "P"]}, 1, 0]}  # Compte les tickets en état "P"
+                        }
+                    }
+                }
+            ]
+            tickets_info = list(tickets_collection.aggregate(pipeline_tickets))
+
+            # Agrégation pour les badges
+            pipeline_badges = [
+                {
+                    "$group": {
+                        "_id": "$user_id",
+                        "total_badges": {"$sum": 1},
+                        "N_badges": {
+                            "$sum": {"$cond": [{"$eq": ["$etat", "N"]}, 1, 0]}
+                        },
+                        "V_badges": {
+                            "$sum": {"$cond": [{"$eq": ["$etat", "V"]}, 1, 0]}
+                        },
+                        "P_badges": {
+                            "$sum": {"$cond": [{"$eq": ["$etat", "P"]}, 1, 0]}
+                        }
+                    }
+                }
+            ]
+            badges_info = list(badges_collection.aggregate(pipeline_badges))
+
+            # Crée un dictionnaire pour les tickets et les badges avec user_id comme clé (convertit ObjectId en string)
+            tickets_dict = {str(item['_id']): item for item in tickets_info}
+            badges_dict = {str(item['_id']): item for item in badges_info}
+
+            # Récupère tous les utilisateurs avec role == 1 et convertit ObjectId en string
+            users = list(users_collection.find({"role": 1}, {'_id': 1, 'firstName': 1, 'email': 1, 'role': 1}))
+            for user in users:
+                user['_id'] = str(user['_id'])  # Convertit ObjectId en string
+                user_id = user['_id']
+                user['tickets'] = tickets_dict.get(user_id, {
+                    "total_tickets": 0,
+                    "N_tickets": 0,
+                    "V_tickets": 0,
+                    "P_tickets": 0
+                })
+                user['badges'] = badges_dict.get(user_id, {
+                    "N_badges": 0,
+                    "V_badges": 0,
+                    "P_badges": 0
+                })
+
+            return jsonify({
+                'status': 200,
+                'users': users
+            }), 200
+            
+        except Exception as e:
+            return jsonify({
+                'status': 200,
+                'error': str(e)
+            }), 500
+        

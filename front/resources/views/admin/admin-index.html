@@ -1,0 +1,58 @@
+{% extends 'views/templates/template-admin.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin/index.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Administrateur</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <h1>Administrateur</h1>
+
+    <div class="resumes">
+        <div class="resume">
+            <div class="resume-icon">
+                <span class="material-icons icon-size-L">shopping_basket</span>
+            </div>
+            <div class="resume-content">
+                <h5>Test</h5>
+            </div>
+        </div>
+
+        <div class="resume">
+            <div class="resume-icon">
+                <span class="material-icons icon-size-L">qr_code_scanner</span>
+            </div>
+            <div class="resume-content">
+                <h5>Test</h5>
+            </div>
+        </div>
+
+        <div class="resume">
+            <div class="resume-icon">
+                <span class="material-icons icon-size-L">barcode_reader</span>
+            </div>
+            <div class="resume-content">
+                <h5>Test</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+    </div>
+
+    {% if current_user.is_authenticated %}
+        <p>Bienvenue, {{ current_user.first_name }}!</p>
+    {% else %}
+        <p>Connectez-vous pour accéder à votre compte.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script src="{{ url_for('static', filename='js/views/admin/index.js') }}"></script>
+{% endblock %}

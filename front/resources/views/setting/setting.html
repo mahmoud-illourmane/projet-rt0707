@@ -1,4 +1,10 @@
-{% extends 'views/templates/template-user.html' %}
+{% if current_user.role == 1 %}
+    {% extends 'views/templates/template-user.html' %}
+{% elif current_user.role == 2 %}
+    {% extends 'views/templates/template-admin.html' %}
+{% else %}
+    {% extends 'views/templates/template-emp.html' %}
+{% endif %}
 
 {% block css %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/setting/setting.css') }}">
@@ -16,7 +22,7 @@
             <div type="button" class="setting-item-div" data-bs-toggle="collapse" data-bs-target="#generalInfo" aria-expanded="false" aria-controls="generalInfo">
                 <div class="setting-item">
                     <div class="setting-item-icon">
-                        <span class="material-icons color_1">manage_accounts</span>
+                        <span class="material-icons color_8">manage_accounts</span>
                     </div>
                     <div class="setting-item-title">
                         Compte
@@ -27,7 +33,7 @@
             <div type="button" class="setting-item-div" data-bs-toggle="collapse" data-bs-target="#password" aria-expanded="false" aria-controls="password">
                 <div class="setting-item ">
                     <div class="setting-item-icon">
-                        <span class="material-icons color_1">lock</span>
+                        <span class="material-icons color_8">lock</span>
                     </div>
                     <div class="setting-item-title">
                         Mot de passe
@@ -156,6 +162,7 @@
             <!-- Delete account -->
             <div class="setting-item-content">
                 <div class="collapse" id="deleteAccount">
+                    <p>Dans cette rubrique vous pouvez supprimer votre compte.</p>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-danger d-flex gap-2" data-bs-toggle="modal" data-bs-target="#modalConfirmDeleteAccount">
                         <span class="material-icons color_6">delete</span>

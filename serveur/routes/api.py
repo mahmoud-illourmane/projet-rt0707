@@ -32,6 +32,30 @@ db_manager = MongoDBManager(MONGO_URI, DATABASE_NAME)
 
 @app.route('/api/sign-up', methods=['POST'])
 def signUp():
+    """
+        Inscription d'un nouvel utilisateur.
+
+        Cette route permet à un nouvel utilisateur de s'inscrire en utilisant une requête POST. Les données d'inscription
+        doivent être fournies dans le corps de la requête au format JSON.
+
+        Args:
+            - firstName (str, obligatoire): Le prénom de l'utilisateur.
+            - email (str, obligatoire): L'adresse e-mail de l'utilisateur.
+            - password (str, obligatoire): Le mot de passe de l'utilisateur.
+
+        Returns:
+            - Statut 200 avec un message de confirmation si l'inscription a réussi.
+            - Statut 500 en cas d'erreur lors de la réception des données.
+
+        Exemple d'utilisation:
+            Pour s'inscrire avec les données suivantes :
+            {
+                "firstName": "Toto",
+                "email": "toto@example.com",
+                "password": "password"
+            }
+            Effectuez une requête POST avec ces données au format JSON.
+    """
 
     if request.method == 'POST':
         try:
@@ -101,22 +125,26 @@ def logIn():
 @app.route('/api/delete-user', methods=['POST'])
 def deleteUser():
     """
-        Endpoint pour supprimer un utilisateur.
+        Supprimer un utilisateur.
 
-        Méthode HTTP supportée : POST.
+        Cette route permet de supprimer un utilisateur en utilisant une requête POST. L'identifiant de l'utilisateur
+        doit être fourni dans le corps de la requête au format JSON.
 
-        Requête JSON attendue :
-        {
-            "user_id": int
-        }
+        Args:
+            - user_id (str, obligatoire): L'identifiant de l'utilisateur à supprimer.
 
-        Réponses HTTP possibles :
-        - 204 No Content : Utilisateur supprimé avec succès.
-        - 409 No Content : Utilisateur n'a pas été supprimé.
-        - 400 Bad Request : Erreur de requête, avec un message explicatif.
-        - 500 Internal Server Error : Erreur interne du serveur.
+        Returns:
+            - Statut 204 si l'utilisateur a été supprimé avec succès.
+            - Statut 409 si une erreur s'est produite lors de la suppression.
 
-        :return: Une réponse JSON avec le statut HTTP approprié.
+        Raises:
+            - Une exception est levée si l'identifiant de l'utilisateur n'est pas fourni ou s'il n'existe pas.
+
+        Exemple d'utilisation:
+            Pour supprimer l'utilisateur avec l'identifiant '12345', effectuez une requête POST avec le corps JSON :
+            {
+                "user_id": "12345"
+            }
     """
     
     if request.method == 'POST':
@@ -149,6 +177,26 @@ def deleteUser():
 
 @app.route('/api/get/tickets-user', methods=['GET'])
 def getAllTicketsUser():
+    """
+        Récupérer tous les tickets d'un utilisateur.
+
+        Cette route permet de récupérer tous les tickets d'un utilisateur en utilisant une requête GET. L'identifiant
+        de l'utilisateur est inclus en tant que paramètre de requête.
+
+        Args:
+            - user_id (str, obligatoire): L'identifiant de l'utilisateur dont on souhaite obtenir les tickets.
+
+        Returns:
+            - Les tickets de l'utilisateur spécifié.
+
+        Raises:
+            - Une exception est levée si l'identifiant de l'utilisateur n'est pas fourni ou s'il n'existe pas.
+
+        Exemple d'utilisation:
+            Pour obtenir tous les tickets de l'utilisateur avec l'identifiant '12345', effectuez une requête GET avec
+            le paramètre 'user_id=12345'.
+    """
+    
     if request.method == 'GET':
         user_id = request.args.get('user_id', default=None, type=str)
 
@@ -170,6 +218,26 @@ def getAllTicketsUser():
 
 @app.route('/api/get/generals-infos-user', methods=['GET'])
 def getGeneralsInfosUser():
+    """
+        Récupérer les informations générales d'un utilisateur.
+
+        Cette route permet de récupérer les informations générales d'un utilisateur en utilisant une requête GET. L'identifiant
+        de l'utilisateur est inclus en tant que paramètre de requête.
+
+        Args:
+            - user_id (str, facultatif): L'identifiant de l'utilisateur dont on souhaite obtenir les informations.
+
+        Returns:
+            - Les informations générales de l'utilisateur spécifié.
+
+        Raises:
+            - Une exception est levée si l'identifiant de l'utilisateur n'est pas valide ou si l'utilisateur n'existe pas.
+
+        Exemple d'utilisation:
+            Pour obtenir les informations générales de l'utilisateur avec l'identifiant '12345', effectuez une requête GET avec
+            le paramètre 'user_id=12345'.
+    """
+
     if request.method == 'GET':
         user_id = request.args.get('user_id', default=None, type=str)
 
@@ -184,6 +252,29 @@ def getGeneralsInfosUser():
 
 @app.route('/api/purchase', methods=['POST'])
 def purchase():
+    """
+        Effectuer un achat de ticket ou de badge.
+
+        Cette route permet à un utilisateur d'effectuer un achat de ticket ou de badge en utilisant une requête POST. Les
+        informations de l'achat, telles que le type de ticket ou de badge, la date d'achat, la validité, etc., sont incluses
+        dans le corps de la requête JSON.
+
+        Args:
+            - selectType (str): Le type de ticket ou de badge à acheter (peut être 'Badge', '2H' ou '1J').
+            - user_id (str, optional): L'identifiant de l'utilisateur effectuant l'achat. Facultatif si l'utilisateur est
+            authentifié.
+
+        Returns:
+            - Les résultats de l'opération d'achat du ticket ou du badge.
+
+        Raises:
+            - Une exception est levée si les données de la requête sont incorrectes ou si le type de ticket/badge est invalide.
+
+        Exemple d'utilisation:
+            Pour effectuer un achat de badge, effectuez une requête POST avec les informations nécessaires dans le corps de la
+            requête JSON.
+    """
+
     if request.method == 'POST':
         user_id = None
         date_achat = datetime.datetime.now()
@@ -234,6 +325,25 @@ def purchase():
 
 @app.route('/api/scanne/ticket', methods=['PUT'])
 def scanneTicket():
+    """
+        Scanner un ticket.
+
+        Cette route permet de scanner un ticket en utilisant une requête PUT. Elle prend en compte le ticket_id et effectue
+        les opérations nécessaires pour scanner le ticket.
+
+        Args:
+            ticket_id (dict): Un dictionnaire contenant les informations du ticket à scanner.
+
+        Returns:
+            - Les résultats de l'opération de scan du ticket.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour scanner un ticket, effectuez une requête PUT avec les informations du ticket à scanner.
+    """
+    
     if request.method == 'PUT':
         ticket_id = request.get_json()
 
@@ -248,6 +358,25 @@ def scanneTicket():
 
 @app.route('/api/scanne/badge', methods=['PUT'])
 def scanneBadge():
+    """
+        Scanner un badge.
+
+        Cette route permet de scanner un badge en utilisant une requête PUT. Elle prend en compte le badge_id et effectue
+        les opérations nécessaires pour scanner le badge.
+
+        Args:
+            badge_id (dict): Un dictionnaire contenant les informations du badge à scanner.
+
+        Returns:
+            - Les résultats de l'opération de scan du badge.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour scanner un badge, effectuez une requête PUT avec les informations du badge à scanner.
+    """
+    
     if request.method == 'PUT':
         badge_id = request.get_json()
 
@@ -266,6 +395,25 @@ def scanneBadge():
 
 @app.route('/api/settings', methods=['PUT'])
 def updateDataSettings():
+    """
+        Met à jour les paramètres de l'utilisateur.
+
+        Cette route permet à un utilisateur de mettre à jour ses paramètres, y compris le prénom, l'email et le mot de passe.
+
+        Args:
+            data (dict): Un dictionnaire contenant les données de mise à jour, y compris l'opération à effectuer,
+                        l'ID de l'utilisateur et les nouvelles données (selon l'opération).
+
+        Returns:
+            - Un résultat indiquant le succès ou l'échec de la mise à jour.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour mettre à jour les paramètres de l'utilisateur, une requête PUT doit être effectuée vers cette route avec les données de mise à jour appropriées.
+    """
+    
     if request.method == 'PUT':
         data = request.get_json()
         
@@ -302,6 +450,25 @@ def updateDataSettings():
 
 @app.route('/api/delete/account', methods=['POST'])
 def deleteAccount():
+    """
+        Supprime un compte utilisateur.
+
+        Cette route permet de supprimer un compte utilisateur à partir de l'ID utilisateur fourni dans la requête POST.
+        La suppression d'un compte utilisateur est une opération sensible qui nécessite une authentification appropriée.
+
+        Args:
+            user_id (str): L'ID de l'utilisateur à supprimer.
+
+        Returns:
+            - Un résultat indiquant le succès ou l'échec de la suppression.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+
+        Exemple d'utilisation:
+            Pour supprimer un compte utilisateur, une requête POST doit être effectuée vers cette route avec l'ID de l'utilisateur à supprimer.
+    """
+    
     if request.method == 'POST':  
         user_data = request.get_json()
         user_id = user_data.get('user_id')
@@ -314,3 +481,31 @@ def deleteAccount():
         "error": "Vous devez utiliser une requête POST pour cette route."
     }
     return jsonify(response), 405
+
+#
+#   Admin Pannel
+#
+
+@app.route('/api/admin/get/all-users', methods=['GET'])
+def getAdminAllUsers():
+    """
+        Récupère toutes les informations des utilisateurs avec le rôle 1 pour le panneau d'administration.
+
+        Cette route permet à un administrateur d'obtenir des informations détaillées sur tous les utilisateurs ayant le rôle 1.
+
+        Returns:
+            - Une liste des utilisateurs avec des informations agrégées sur les tickets et les badges.
+
+        Raises:
+            Aucune exception n'est levée dans cette fonction.
+    """
+    
+    if request.method == 'GET':
+        
+        result = User.getAdminAllUsers(db_manager)
+        return result
+    response = {
+        "status": 405,
+        "error": "Vous devez utiliser une requête GET pour cette route."
+    }
+    return jsonify(response), 200 

@@ -1,0 +1,60 @@
+{% extends 'views/templates/template-admin.html' %}
+
+{% block css %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/admin/gestions-users.css') }}">
+{% endblock %}
+
+{% block title %}
+    <title>Gestion des utilisateurs</title>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <h1>Gestions des utilisateurs</h1>
+
+    <div class="container">
+        <h5>Listes des utilisateurs</h5>
+
+        <div class="div-message-info info_">
+            <div class="div-info-icon">
+                <span class="material-icons">info</span>
+            </div>
+            <div class="div-info-content">
+                <p>
+                    <strong>N :</strong> Jamais Utilisé
+                    <br>
+                    <strong>V :</strong> En Voyage
+                    <br>
+                    <strong>P :</strong> Périmé
+                </p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle table-striped table-tickets-badges-users table-dark">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">Nom</th>
+                        <th scope="col">Total Tickets</th>
+                        <th scope="col">Nb Tickets N</th>
+                        <th scope="col">Nb Tickets V</th>
+                        <th scope="col">Nb Tickets P</th>
+                        <th scope="col">Total Badge</th>
+                        <th scope="col">Nb Badge J</th>
+                        <th scope="col">Nb Badge V</th>	
+                        <th scope="col">Nb Badge P</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block jsScripts %}
+    <script src="{{ url_for('static', filename='js/views/admin/gestions-users.js') }}"></script>
+{% endblock %}

@@ -65,31 +65,22 @@ $(document).ready(function() {
             },
             error: function(xhr, textStatus, errorThrown) {
                 var errorMessage = 'Erreur inconnue';
-            
-                // Vérifier si la réponse contient un code de statut et un message d'erreur personnalisé
+    
+                // Vérifie si la réponse est du JSON
                 if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-                    switch (xhr.status) {
-                        case 400:
-                        case 401:
-                        case 403:
-                        case 404:
-                        case 500:
-                            // Utilise le message d'erreur personnalisé du serveur
-                            errorMessage = xhr.responseJSON.error;
-                            break;
-                        default:
-                            errorMessage = "Erreur HTTP " + xhr.status + ": " + xhr.responseJSON.error;
-                    }
+                    errorMessage = xhr.responseJSON.error;
+                } else if (xhr.status) {
+                    // Si la réponse n'est pas du JSON, utilise le statut HTTP
+                    errorMessage = "Erreur HTTP " + xhr.status + ": " + (errorThrown ? errorThrown : "Erreur inconnue");
                 } else if (textStatus !== 'error') {
-                    // Erreur avec un texte d'état fourni par jQuery (par exemple, "timeout", "abort", etc.)
+                    // Erreur avec un texte d'état fourni par jQuery
                     errorMessage = textStatus;
                 } else if (errorThrown) {
                     // Message d'erreur par défaut fourni par le navigateur
                     errorMessage = errorThrown;
                 }
-                
+    
                 console.log(errorMessage);
-                showToastMessage(errorMessage, 'text-danger');
             },
             complete: function() {
                 stopLoadingAnimation();
