@@ -101,7 +101,7 @@ $(document).ready(function() {
                                 <th scope="row" class="text-center" colspan="7">Aucun Ticket</th>
                             </tr>
                         `;
-                        var tbody = $('.table tbody');
+                        var tbody = $('.table-tickets tbody');
                         tbody.append(row);
                     }
 

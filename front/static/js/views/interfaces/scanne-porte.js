@@ -154,7 +154,7 @@ $(document).ready(function() {
                                 <th scope="row" class="text-center" colspan="7">Aucun Ticket</th>
                             </tr>
                         `;
-                        var tbody = $('.table tbody');
+                        var tbody = $('.table-tickets tbody');
                         tbody.append(row);
                     }
 
@@ -254,7 +254,7 @@ $(document).ready(function() {
                                 <th scope="row" class="text-center" colspan="7">Aucun Badge</th>
                             </tr>
                         `;
-                        var tbody = $('.table tbody');
+                        var tbody = $('.table-badges tbody');
                         tbody.append(row);
                     }
                 }

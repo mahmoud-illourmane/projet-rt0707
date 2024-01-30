@@ -2,6 +2,7 @@ from flask import jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 from pymongo.errors import PyMongoError
+
 import datetime, re
 
 from src.classes.mongoDb import MongoDBManager
@@ -26,6 +27,8 @@ class User:
         self.email = email
         self.password = password
         self.role = role
+        self.created_at = datetime.datetime.now()
+        self.updated_at = datetime.datetime.now()
     
     def createUser(self):
         """
@@ -55,7 +58,9 @@ class User:
                 'firstName': self.firstName,
                 'email': self.email,
                 'password': hashed_password,
-                'role': self.role
+                'role': self.role,
+                'created_at': self.created_at,
+                'updated_at': self.updated_at
             }
 
             # Insérer l'utilisateur dans la base de données
@@ -109,7 +114,10 @@ class User:
 
         if len(new_first_name) >= 3 and new_first_name.isalpha():
             try:
-                result = db_manager.get_collection('users').update_one({"_id": ObjectId(user_id)}, {"$set": {"firstName": new_first_name}})
+                result = db_manager.get_collection('users').update_one(
+                    {"_id": ObjectId(user_id)},
+                    {"$set": {"firstName": new_first_name, "updated_at": datetime.datetime.now()}}
+                )
                 if result.modified_count > 0:
                     return jsonify({
                         'status': 200,
@@ -147,7 +155,11 @@ class User:
         if re.match(email_regex, new_email):
             print(new_email)
             try:
-                result = db_manager.get_collection('users').update_one({"_id": ObjectId(user_id)}, {"$set": {"email": new_email}})
+                result = db_manager.get_collection('users').update_one(
+                    {"_id": ObjectId(user_id)},
+                    {"$set": {"email": new_email, "updated_at": datetime.datetime.now()}}
+                )
+
                 if result.modified_count > 0:
                     return jsonify({
                         'status': 200,
@@ -209,7 +221,11 @@ class User:
                     hashed_new_password = generate_password_hash(new_password)
                     try:
                         # Met à jour le mot de passe dans la base de données
-                        result = db_manager.get_collection('users').update_one({"_id": ObjectId(user_id)}, {"$set": {"password": hashed_new_password}})
+                        result = db_manager.get_collection('users').update_one(
+                            {"_id": ObjectId(user_id)},
+                            {"$set": {"password": hashed_new_password, "updated_at": datetime.datetime.now()}}
+                        )
+                        
                         if result.modified_count > 0:
                             return jsonify({
                                 'status': 200,
@@ -409,7 +425,6 @@ class User:
             'badges': badges_list
         }), 200
 
-    
     @staticmethod
     def login(db_manager: MongoDBManager, email:str, password:str):
         """
