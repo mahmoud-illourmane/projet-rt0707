@@ -660,27 +660,27 @@ def scanneBadge():
     }
     return jsonify(response), 405 
 
-@app.route('/api/send/request/open/door', methods=['POST'])
+@app.route('/api/send/request/open/door', methods=['PUT'])
 @login_required
 def sendRequestOpenDoor():
     
-    if request.method == 'POST':
+    if request.method == 'PUT':
         data  = request.get_json()
 
         api_url = f"{server_door_url}/door/publish"
         try:
-            response = requests.post(api_url, json=data)
+            response = requests.put(api_url, json=data)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
-            error_message = f"Erreur de requête vers l'URL distante 1: {str(e)}"
+            error_message = f"Erreur de requête vers l'URL distante : {str(e)}"
             return jsonify({
                 "status": 500, 
                 "error": error_message
-            }), 500
+            }), 200
     response = {
         "status": 405,
-        "error": "Vous devez utiliser une requête POST pour cette route."
+        "error": "Vous devez utiliser une requête PUT pour cette route."
     }
     return jsonify(response), 200 
 

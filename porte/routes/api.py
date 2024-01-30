@@ -24,10 +24,10 @@ from src.classes.verif import Verif
 # Initialisation de l'instance du client MQTT
 mqtt_client = MQTTClient(client_id="PythonPublisher")
 
-@app.route('/door/publish', methods=['POST'])
+@app.route('/door/publish', methods=['PUT'])
 def publish_message():
     """
-        Route pour publier un message via MQTT à la réception d'une requête HTTP POST.
+        Route pour publier un message via MQTT à la réception d'une requête HTTP PUT.
     """
     
     data = request.json  # Obtention des données JSON de la requête
@@ -39,7 +39,7 @@ def publish_message():
     if not result:
         response = {
             'status': 405,
-            'error': 'Votre titre de transport est périmé.'
+            'error': 'PORTE: Votre titre de transport est périmé.'
         }
         return jsonify(response), 200
     
@@ -55,7 +55,7 @@ def publish_message():
         print('PORTE: données publiées.')
         return jsonify({
             'status': 200, 
-            'message': "Porte Ouverte pendant 3sc"
+            'message': "Porte Ouverte pendant 3sc MESSAGE FORGE A LA MAIN !"
         }), 200
     else:
         return jsonify({

@@ -288,7 +288,7 @@ $(document).ready(function() {
      * @param {string} qrCodeBase64 - L'image du QRCode.
      */
     function scannerPorte(qrCodeBase64) {    
-        // Données à envoyer dans la requête POST
+        // Données à envoyer dans la requête PUT
         var donnees = {
             qrCodeBase64: qrCodeBase64,
         };
@@ -296,7 +296,7 @@ $(document).ready(function() {
         // Envoi de la requête AJAX avec les données préparées
         $.ajax({
             url: '/api/send/request/open/door',
-            type: 'POST',
+            type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(donnees),
             dataType: 'json',
