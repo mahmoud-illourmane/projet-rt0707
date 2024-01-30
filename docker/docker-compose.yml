@@ -37,3 +37,26 @@ services:                                           # Définition des services (
       MONGO_INITDB_ROOT_PASSWORD: secret            # Mot de passe root MongoDB
     volumes:
       - /home/toto/projet-rt0707/mongoDb:/data/db   # Montage du volume hôte dans le conteneur MongoDB
+
+  door:                                             
+    build:                                          
+      context: .                                    
+      dockerfile: Dockerfile.door                  
+    image: image_flask_door                        
+    container_name: container_door                
+    ports:
+      - "5000:5000"                                 
+    volumes:
+      - /home/toto/projet-rt0707/porte:/app    
+
+  iotHub:                                             
+    build:                                          
+      context: .                                    
+      dockerfile: Dockerfile.iotHub                  
+    image: image_flask_iot_hub                       
+    container_name: container_iot_hub               
+    ports:
+      - "5000:5000"                                 
+    volumes:
+      - /home/toto/projet-rt0707/iotHub:/app         
+
