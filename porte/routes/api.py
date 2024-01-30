@@ -55,7 +55,7 @@ def publish_message():
         print('PORTE: données publiées.')
         return jsonify({
             'status': 200, 
-            'message': "Message publié avec succès"
+            'message': "Porte Ouverte pendant 3sc"
         }), 200
     else:
         return jsonify({

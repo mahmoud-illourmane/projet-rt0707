@@ -206,7 +206,7 @@ def getAllTicketsUser():
                 "error": "Aucun ID fournis."
             }
             return jsonify(response), 200 
-        
+        Ticket.verifierTicketsPerimes(db_manager)
         result = User.getAllTicketsUser(db_manager, user_id)
 
         return result
@@ -346,7 +346,8 @@ def scanneTicket():
     
     if request.method == 'PUT':
         data = request.get_json()
- 
+        print('données reçus.', data)
+        
         ticket_id = data['qrId']
         result = Ticket.scannerTicket(ticket_id, db_manager)
         return result

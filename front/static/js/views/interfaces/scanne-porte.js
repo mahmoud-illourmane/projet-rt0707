@@ -265,7 +265,7 @@ $(document).ready(function() {
         var choiceType = $(this).data('choice-type');
         var qrCode = $(this).data('titre-qrcode');
 
-        requetePOST(qrCode);
+        scannerPorte(qrCode);
 
         // Appele la fonction appropriée en fonction du type
         // if (choiceType === '1J' || choiceType === '2H') {
@@ -281,108 +281,13 @@ $(document).ready(function() {
         // checkInputLengthAndToggleSubmitButton();
     });
     
+    
     /**
-     * Fonction qui effectue une requête Ajax pour ouvrir une porte, lorsque il s'agit d'un ticket.
+     * Fonction qui effectue une requête Ajax pour ouvrir une porte.
      *
-     * @param {string} ticketId - L'identifiant du ticket.
+     * @param {string} qrCodeBase64 - L'image du QRCode.
      */
-    function scannerTicket(ticketId) {
-        var ticket = {
-            ticket_id: ticketId,
-        };
-        
-        $.ajax({
-            url: '/api/scanne/ticket',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(ticket),
-            success: function(response) {
-                if(response.status == 200) {
-                    showToastMessage(response.message, 'text-success');
-                    $('.led').removeClass('red').addClass('green');
-
-                    // Démarre le clignotement de la porte
-                    const clignotement = setInterval(toggleClassesDoor, 500); // Alterne toutes les 500 millisecondes (0.5 seconde)
-                    // Arrête le clignotement après 3 secondes
-                    setTimeout(() => {
-                        clearInterval(clignotement); // Arrête le clignotement
-                        $('.led').removeClass('green green-light').addClass('red'); // Revenir à la classe "red"
-                        showToastMessage("Porte fermée.", 'text-danger');
-                    }, 3000);
-
-                }else {
-                    showToastMessage(response.error, 'text-danger');
-                }
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                var errorMessage = 'Erreur inconnue';
-                if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;
-                } else if (textStatus !== 'error') {
-                    errorMessage = 'Erreur AJAX: ' + textStatus;
-                } else if (errorThrown) {
-                    errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
-                }
-                console.log(errorMessage);
-                showToastMessage(errorMessage, 'text-danger');
-            },
-            complete: function() {
-                getAllTicketsUser();
-            }
-        });
-    }
-
-    /**
-     * Fonction qui effectue une requête Ajax pour ouvrir une porte, lorsque il s'agit d'un badge.
-     *
-     * @param {string} ticketId - L'identifiant du ticket.
-     */
-    function scannerBadge(badgeId) {
-        var badge = {
-            badge_id: badgeId,
-        };
-        
-        $.ajax({
-            url: '/api/scanne/badge',
-            type: 'PUT',
-            contentType: 'application/json',
-            data: JSON.stringify(badge),
-            success: function(response) {
-                if(response.status == 200) {
-                    showToastMessage(response.message, 'text-success');
-                    $('.led').removeClass('red').addClass('green');
-
-                    const clignotement = setInterval(toggleClassesDoor, 500); 
-
-                    setTimeout(() => {
-                        clearInterval(clignotement);
-                        $('.led').removeClass('green green-light').addClass('red'); 
-                        showToastMessage("Porte fermée.", 'text-danger');
-                    }, 3000);
-
-                }else {
-                    showToastMessage(response.error, 'text-danger');
-                }
-            },
-            error: function(xhr, textStatus, errorThrown) {
-                var errorMessage = 'Erreur inconnue';
-                if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;
-                } else if (textStatus !== 'error') {
-                    errorMessage = 'Erreur AJAX: ' + textStatus;
-                } else if (errorThrown) {
-                    errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
-                }
-                console.log(errorMessage);
-                showToastMessage(errorMessage, 'text-danger'); 
-            },
-            complete: function() {
-                getAllTicketsUser();
-            }
-        });
-    }
-
-    function requetePOST(qrCodeBase64) {    
+    function scannerPorte(qrCodeBase64) {    
         // Données à envoyer dans la requête POST
         var donnees = {
             qrCodeBase64: qrCodeBase64,
@@ -397,9 +302,16 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if(response.status == 200) {
-                    console.log(response.data);
-                    $("#print-result").html(response.data);
                     showToastMessage(response.message, 'text-success');
+                    $('.led').removeClass('red').addClass('green');
+
+                    const clignotement = setInterval(toggleClassesDoor, 500); 
+
+                    setTimeout(() => {
+                        clearInterval(clignotement);
+                        $('.led').removeClass('green green-light').addClass('red'); 
+                        showToastMessage("Porte fermée.", 'text-danger');
+                    }, 3000);
                 }else {
                     showToastMessage(response.error, 'text-danger');
                 }
@@ -424,12 +336,112 @@ $(document).ready(function() {
                 console.log(errorMessage);
             },
             complete: function() {
+                getAllTicketsUser();
                 console.log('Requête complétée');
                 $('.btn-scan').prop('disabled', false);
             }
         });
     }
 
-    
+    /**
+     * Fonction qui effectue une requête Ajax pour ouvrir une porte, lorsque il s'agit d'un ticket.
+     *
+     * @param {string} ticketId - L'identifiant du ticket.
+     */
+    // function scannerTicket(ticketId) {
+    //     var ticket = {
+    //         ticket_id: ticketId,
+    //     };
+        
+    //     $.ajax({
+    //         url: '/api/scanne/ticket',
+    //         type: 'PUT',
+    //         contentType: 'application/json',
+    //         data: JSON.stringify(ticket),
+    //         success: function(response) {
+    //             if(response.status == 200) {
+    //                 showToastMessage(response.message, 'text-success');
+    //                 $('.led').removeClass('red').addClass('green');
+
+    //                 // Démarre le clignotement de la porte
+    //                 const clignotement = setInterval(toggleClassesDoor, 500); // Alterne toutes les 500 millisecondes (0.5 seconde)
+    //                 // Arrête le clignotement après 3 secondes
+    //                 setTimeout(() => {
+    //                     clearInterval(clignotement); // Arrête le clignotement
+    //                     $('.led').removeClass('green green-light').addClass('red'); // Revenir à la classe "red"
+    //                     showToastMessage("Porte fermée.", 'text-danger');
+    //                 }, 3000);
+
+    //             }else {
+    //                 showToastMessage(response.error, 'text-danger');
+    //             }
+    //         },
+    //         error: function(xhr, textStatus, errorThrown) {
+    //             var errorMessage = 'Erreur inconnue';
+    //             if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
+    //                 errorMessage = xhr.responseJSON.error;
+    //             } else if (textStatus !== 'error') {
+    //                 errorMessage = 'Erreur AJAX: ' + textStatus;
+    //             } else if (errorThrown) {
+    //                 errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
+    //             }
+    //             console.log(errorMessage);
+    //             showToastMessage(errorMessage, 'text-danger');
+    //         },
+    //         complete: function() {
+    //             getAllTicketsUser();
+    //         }
+    //     });
+    // }
+
+    /**
+     * Fonction qui effectue une requête Ajax pour ouvrir une porte, lorsque il s'agit d'un badge.
+     *
+     * @param {string} ticketId - L'identifiant du ticket.
+     */
+    // function scannerBadge(badgeId) {
+    //     var badge = {
+    //         badge_id: badgeId,
+    //     };
+        
+    //     $.ajax({
+    //         url: '/api/scanne/badge',
+    //         type: 'PUT',
+    //         contentType: 'application/json',
+    //         data: JSON.stringify(badge),
+    //         success: function(response) {
+    //             if(response.status == 200) {
+    //                 showToastMessage(response.message, 'text-success');
+    //                 $('.led').removeClass('red').addClass('green');
+
+    //                 const clignotement = setInterval(toggleClassesDoor, 500); 
+
+    //                 setTimeout(() => {
+    //                     clearInterval(clignotement);
+    //                     $('.led').removeClass('green green-light').addClass('red'); 
+    //                     showToastMessage("Porte fermée.", 'text-danger');
+    //                 }, 3000);
+
+    //             }else {
+    //                 showToastMessage(response.error, 'text-danger');
+    //             }
+    //         },
+    //         error: function(xhr, textStatus, errorThrown) {
+    //             var errorMessage = 'Erreur inconnue';
+    //             if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
+    //                 errorMessage = xhr.responseJSON.error;
+    //             } else if (textStatus !== 'error') {
+    //                 errorMessage = 'Erreur AJAX: ' + textStatus;
+    //             } else if (errorThrown) {
+    //                 errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
+    //             }
+    //             console.log(errorMessage);
+    //             showToastMessage(errorMessage, 'text-danger'); 
+    //         },
+    //         complete: function() {
+    //             getAllTicketsUser();
+    //         }
+    //     });
+    // }
 });
 

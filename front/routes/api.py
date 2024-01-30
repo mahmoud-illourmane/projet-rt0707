@@ -684,7 +684,6 @@ def sendRequestOpenDoor():
     }
     return jsonify(response), 200 
 
-
 #
 #
 #   Admin Pannel

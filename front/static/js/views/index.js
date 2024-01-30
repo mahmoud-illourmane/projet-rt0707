@@ -30,31 +30,15 @@ $(document).ready(function() {
                                         <span class="material-icons">calendar_month</span>
                                         <h6>Date de création : ${ticketInfo.date_achat}</h6>
                                     </div>
-                                    <div class="type-ticket-badge qr-modal">
-                                        <span class="material-icons">token</span>
-                                        <h6>Type Ticket : ${ticketInfo.type}</h6>
-                                    </div>
                                     <div class="date-validite qr-modal">
                                         <span class="material-icons">hourglass_bottom</span>
                                         <h6>Date d'expiration : ${ticketInfo.validite}</h6>
                                     </div>
-                                    <div class="date-validite qr-modal">
-                                        <span class="material-icons">history</span>
-                                        <h6>Etat du ticket : ${ticketInfo.etat}</h6>
-                                    </div>
-                                    <div class="date-validite qr-modal">
-                                        <span class="material-icons">functions</span>
-                                        <h6>Nombre de scannes : ${ticketInfo.nb_scannes}</h6>
+                                    <div class="type-ticket-badge qr-modal">
+                                        <span class="material-icons">token</span>
+                                        <h6>Type Ticket : ${ticketInfo.type}</h6>
                                     </div>
                                 </div>
-
-                                <p>
-                                    N : Jamais utilisé
-                                    <br>
-                                    P : Périmé
-                                    <br>
-                                    V : En voyage
-                                </p>
                             </div>
                         `;
                         $('.qr-code-modal-index').append(elementHtml);

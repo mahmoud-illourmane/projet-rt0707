@@ -172,4 +172,38 @@ class Ticket:
                 'error': 'Ticket non trouvé.',
             }), 404 
     
-    
+    @staticmethod
+    def verifierTicketsPerimes(db_manager: MongoDBManager):
+        """
+            Cette méthode vérifie tous les tickets et badges périmés dans leurs collections respectives
+            et met à jour leur état à 'P' si leur date de validité est dépassée, indépendamment de leur état actuel étant 'N' ou 'V'.
+
+            Args:
+                db_manager (MongoDBManager): Le gestionnaire de la base de données MongoDB.
+
+            Returns:
+                int: Le nombre total de tickets et badges périmés mis à jour.
+        """
+        
+        # J'obtiens la date et l'heure actuelles
+        date_actuelle = datetime.now()
+
+        # Préparation du filtre pour sélectionner les tickets et badges périmés
+        filtre_perimes = {
+            'validite': {'$lt': date_actuelle},
+            'etat': {'$in': ['N', 'V']}  # Vérifie si l'état est soit 'N' soit 'V'
+        }
+
+        # Mise à jour pour les tickets
+        tickets_collection = db_manager.get_collection('tickets')
+        tickets_collection.update_many(
+            filtre_perimes,
+            {'$set': {'etat': 'P'}}
+        )
+
+        # Mise à jour pour les badges
+        badges_collection = db_manager.get_collection('badges')
+        badges_collection.update_many(
+            filtre_perimes,
+            {'$set': {'etat': 'P'}}
+        )

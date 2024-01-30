@@ -341,7 +341,7 @@ class User:
                 etat = last_ticket.get('etat', 'N/A')
                 nb_scannes = last_ticket.get('nb_scannes', '0')
                 
-                last_ticket_qrcode = QRCode.create_qr_code_with_info(id, date_achat, type, validite, etat, nb_scannes)
+                last_ticket_qrcode = QRCode.create_qr_code_with_info(id, date_achat, type, validite)
             else:
                 last_ticket_qrcode = None
                 
