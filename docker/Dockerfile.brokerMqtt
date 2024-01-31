@@ -1,0 +1,16 @@
+#
+# Dockerfile pour un Broker MQTT Mosquitto
+#
+
+# Utiliser l'image officielle de Mosquitto
+FROM eclipse-mosquitto:latest
+
+# Définir le répertoire de travail dans le conteneur (optionnel pour Mosquitto)
+WORKDIR /mosquitto
+
+# Exposer les ports standards de Mosquitto
+EXPOSE 1883
+EXPOSE 9001
+
+# Démarrer Mosquitto avec la configuration personnalisée
+CMD ["mosquitto", "-c", "/mosquitto/config/mosquitto.conf"]

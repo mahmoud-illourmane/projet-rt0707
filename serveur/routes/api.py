@@ -346,7 +346,7 @@ def scanneTicket():
     
     if request.method == 'PUT':
         data = request.get_json()
-        print('données reçus.', data)
+        print('SCAN TICKET : données reçus.', data)
         
         ticket_id = data['qrId']
         result = Ticket.scannerTicket(ticket_id, db_manager)
@@ -380,10 +380,11 @@ def scanneBadge():
     
     if request.method == 'PUT':
         data = request.get_json()
-
+        print('SCAN BADGE : ', data)
+        
         badge_id = data['qrId']
         result = Badge.scannerBadge(badge_id, db_manager)
-        print('j\'ai recu', badge_id)
+        
         return result
     response = {
         "status": 405,

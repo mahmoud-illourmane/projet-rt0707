@@ -1,4 +1,4 @@
-{% if current_user.role == 1 %}
+{% if current_user.role == 1 or not current_user.is_authenticated %}
     {% extends 'views/templates/template-user.html' %}
 {% elif current_user.role == 2 %}
     {% extends 'views/templates/template-admin.html' %}

@@ -1,7 +1,8 @@
-from app import app
+
 from flask import jsonify, request
 import json, requests
 
+# subscriber.py
 import asyncio
 from aiocoap import *
 
@@ -19,61 +20,69 @@ from aiocoap import *
 |   API REST ROUTES
 |   ===============
 """
-server_back_end_url = app.config['SERVER_BACK_END_URL']
 
-@app.route('/api/iot-hub/put/qrCode', methods=['PUT'])
-def receiveQrCodeData():
+server_back_end_url = 'http://127.0.0.1:5001'
+server_door_url = 'http://127.0.0.1:5002'
+
+async def send_coap_message():
+    protocol = await Context.create_client_context()
+
+    request = Message(code=POST, payload=b'OK', uri=f"coap://{server_door_url}/resource")
+    try:
+        response = await protocol.request(request).response
+    except Exception as e:
+        print('Failed to send CoAP message:', e)
+    else:
+        print('Message sent to publisher:', response.payload)
+
+def sendQrCodeInfosToServer(qrCodeInfos:json):
+    api_url = f"{server_back_end_url}/api/iot-hub/put/qrCode"
     
-    if request.method == 'PUT':
-        try:
-            data = request.get_json()
-            print('Je recois les données :')
-            print(data)
-            
-            qrType = data['QrType']
-            qrId = data['QrId']
-            print(qrType)
-            print(qrId)
-            
-            if qrType == 'Badge':
-                end_point = "/api/scanne/badge"
-            else:
-                end_point = "/api/scanne/ticket"
-            
-            data = {
-                'qrType': qrType,
-                'qrId': qrId
-            }
-            api_url = f"{server_back_end_url}{end_point}"
+    qrType = qrCodeInfos['QrType']
+    qrId = qrCodeInfos['QrId']
 
-            response = requests.put(api_url, json=data)
-            response.raise_for_status()
-            print('Données envoyé.')
-            
-            if response.status_code == 200:
-                response = {
-                    "status": 200,
-                    "message": "Porte Ouverte."
-                }
-                print(response)
-                
-                return jsonify(response), 200
-            else:
-                print(response)
-                response = {
-                    "status": 400,
-                    "message": "Impossible d'ouvrir la porte."
-                }
-                return jsonify(response), 400
-            
-        except Exception as e:
-            print(str(e))
-            return jsonify({
-                "status": 500,
-                "error": f"Erreur de réception des données coté serveur IOH-HUB. {str(e)}"
-            }), 500
-    response = {
-        "status": 405,
-        "error": "Vous devez utiliser une requête PUT pour cette route."
+    print('qrcode id: ', qrId)
+    print('qrcode type: ', qrType)
+        
+    print('Envoi des données.')
+        
+    # Détermine quel endPoint coté serveur flask appeler
+    if qrType == 'Badge':
+        end_point = "/api/scanne/badge"
+    else:
+        end_point = "/api/scanne/ticket"
+    
+    # Forge les données
+    data = {
+        'qrType': qrType,
+        'qrId': qrId
     }
-    return jsonify(response), 405
+
+    # Envoi de la requête PUT
+    try:
+        api_url = f"{server_back_end_url}{end_point}"
+
+        response = requests.put(api_url, json=data)
+        response.raise_for_status()
+        print('Données envoyé.')
+            
+        if response.status_code == 200:
+            response = {
+                "status": 200,
+                "message": "Porte Ouverte."
+            }
+            print(response) 
+            return jsonify(response), 200
+        else:
+            print(response)
+            response = {
+                "status": 400,
+                "message": "Impossible d'ouvrir la porte."
+            }
+            return jsonify(response), 400
+    except Exception as e:
+        error_message = f"Erreur de requête vers l'URL distante brokerMqTT: {str(e)}"
+        return {
+            "status": 500, 
+            "error": error_message
+        }, 500

@@ -35,6 +35,7 @@ def publish_message():
 
     qrCodeInfos = QRCode.decode_json_from_qr_code(qrCode)
     
+    # Vérifications en local du titre de transport
     result = Verif.qrCodeVerifLocal(qrCodeInfos)
     if not result:
         response = {
@@ -43,14 +44,15 @@ def publish_message():
         }
         return jsonify(response), 200
     
+    # Préparation de la Topic pour publication
     topic = "check/transport"
     message = {
         'QrId': qrCodeInfos['id'],
         'QrType': qrCodeInfos['type'],
     }
 
+    # Publication de la topic dans la file MqTT
     if topic and message:
-        # Publication du message sur le topic spécifié
         mqtt_client.publish(topic, json.dumps(message))
         print('PORTE: données publiées.')
         return jsonify({

@@ -259,28 +259,10 @@ $(document).ready(function() {
     $(document).on('click', '.btn[data-choice-type]', function() {
         // Désactive les boutons "scanner"
         $('.btn-scan').prop('disabled', true);
-        
-        // Récupère l'ID et le type depuis les attributs data
-        var choiceId = $(this).data('badge-choice') || $(this).data('ticket-choice');
-        var choiceType = $(this).data('choice-type');
+        // Récupère le QROCDE
         var qrCode = $(this).data('titre-qrcode');
-
         scannerPorte(qrCode);
-
-        // Appele la fonction appropriée en fonction du type
-        // if (choiceType === '1J' || choiceType === '2H') {
-        //     scannerTicket(choiceId);
-        // } else if (choiceType === 'Badge') {
-        //     scannerBadge(choiceId);
-        // }
-        
-        // Mettre l'ID dans l'input
-        // inputElement.val(choiceId);
-        
-        // Vérifie à nouveau la longueur de l'id
-        // checkInputLengthAndToggleSubmitButton();
     });
-    
     
     /**
      * Fonction qui effectue une requête Ajax pour ouvrir une porte.
