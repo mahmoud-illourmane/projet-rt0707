@@ -46,6 +46,7 @@ services:                                           # Définition des services (
     image: image_flask_door                        
     container_name: container_door                
     ports:
+<<<<<<< HEAD
       - "5002:5000"    
       - "1884:1883"                               
     volumes:
@@ -63,6 +64,12 @@ services:                                           # Définition des services (
     volumes:
       - /home/toto/projet-rt0707/brokerMqtt:/app        
 
+=======
+      - "5000:5000"                                 
+    volumes:
+      - /home/toto/projet-rt0707/porte:/app    
+
+>>>>>>> 929e5c7eb05d6e25e5d9ea0fa0a3885ff5cbd3b8
   iotHub:                                             
     build:                                          
       context: .                                    
@@ -70,6 +77,7 @@ services:                                           # Définition des services (
     image: image_flask_iot_hub                       
     container_name: container_iot_hub               
     ports:
+<<<<<<< HEAD
       - "5004:5000"                                 
     volumes:
       - /home/toto/projet-rt0707/iotHub:/app   
@@ -77,3 +85,9 @@ services:                                           # Définition des services (
 networks:
   my_network:
     driver: bridge    
+=======
+      - "5000:5000"                                 
+    volumes:
+      - /home/toto/projet-rt0707/iotHub:/app         
+
+>>>>>>> 929e5c7eb05d6e25e5d9ea0fa0a3885ff5cbd3b8

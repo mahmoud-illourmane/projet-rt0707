@@ -11,6 +11,7 @@ COPY /requirements-door.txt /app/
 # Installation des dépendances
 #
 
+<<<<<<< HEAD
 # Mise à jour de apk et installation des dépendances nécessaires
 RUN apk update \
     && apk add --no-cache gcc musl-dev linux-headers \
@@ -22,6 +23,13 @@ RUN apk update \
 
 # Copier le fichier requirements dans le conteneur.
 COPY /requirements-door.txt /app/
+=======
+# Installer gcc, musl-dev et linux-headers pour compiler les dépendances Python
+RUN apk add --no-cache gcc musl-dev linux-headers
+
+# Installer Mosquitto et les outils nécessaires
+RUN apk add --no-cache mosquitto mosquitto-clients
+>>>>>>> 929e5c7eb05d6e25e5d9ea0fa0a3885ff5cbd3b8
 
 # Installation des dépendances Python à partir du fichier requirements.txt
 RUN pip3 install --no-cache-dir -r requirements-door.txt

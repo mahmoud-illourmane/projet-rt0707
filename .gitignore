@@ -2,7 +2,6 @@
 .vscode
 front_end/__pycache__/
 mongoDb/
-app.py
 
 *.pyc
 *.pyo
