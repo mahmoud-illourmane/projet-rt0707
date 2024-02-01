@@ -1,17 +1,17 @@
 version: '3'                                        # Utilisation de la version 3 de la syntaxe docker-compose
 services:                                           # Définition des services (conteneurs) que vous souhaitez exécuter
 
-  front:                                            # Nom du service, ici 'front', qui sera utilisé pour référencer ce service dans Docker
-    build:                                          # Instruction pour construire l'image Docker de ce service
-      context: .                                    # Le contexte de build, '.' indique le répertoire courant
-      dockerfile: Dockerfile.front                  # Nom du fichier Dockerfile à utiliser pour la construction
-    image: image_flask_front                        # Nom et tag de l'image Docker qui sera créée
-    container_name: container_front                 # Nom du conteneur Docker qui sera créé
+  mongo:                                            # Définition du service "mongo"
+    image: mongo:latest                             # Utilise l'image MongoDB la plus récente
+    container_name: container_mongo_db
     ports:
-      - "5000:5000"                                 # Mappage des ports: port 5001 de l'hôte vers le port 5000 du conteneur
+      - "27017:27017"                               # Mappage du port 27017 de l'hôte au port 27017 du conteneur
+    environment:                                    # Variables d'environnement pour le service MongoDB
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin        # Nom d'utilisateur root MongoDB
+      MONGO_INITDB_ROOT_PASSWORD: secret            # Mot de passe root MongoDB
     volumes:
-      - /home/toto/projet-rt0707/front:/app         # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur.
-  
+      - /home/toto/projet-rt0707/mongoDb:/data/db   # Montage du volume hôte dans le conteneur MongoDB
+
   server:                                           # Définition du service "serveur"
     build:                                          # Spécifie la construction de l'image
       context: .                                    # Répertoire contexte de construction
@@ -27,69 +27,60 @@ services:                                           # Définition des services (
       - MONGO_PASSWORD=secret                       # Mot de passe MongoDB
       - MONGO_HOSTNAME=mongo                        # Nom d'hôte de MongoDB
       - MONGO_PORT=27017                            # Port de MongoDB
+    depends_on:
+      - mongo                                       # Spécifie la dépendance du service "server" au service "mongo"
 
-  mongo:                                            # Définition du service "mongo"
-    image: mongo:latest                             # Utilise l'image MongoDB la plus récente
-    container_name: container_mongo_db
+  front:                                            # Nom du service, ici 'front', qui sera utilisé pour référencer ce service dans Docker
+    build:                                          # Instruction pour construire l'image Docker de ce service
+      context: .                                    # Le contexte de build, '.' indique le répertoire courant
+      dockerfile: Dockerfile.front                  # Nom du fichier Dockerfile à utiliser pour la construction
+    image: image_flask_front                        # Nom et tag de l'image Docker qui sera créée
+    container_name: container_front                 # Nom du conteneur Docker qui sera créé
     ports:
-      - "27017:27017"                               # Mappage du port 27017 de l'hôte au port 27017 du conteneur
-    environment:                                    # Variables d'environnement pour le service MongoDB
-      MONGO_INITDB_ROOT_USERNAME: mongoadmin        # Nom d'utilisateur root MongoDB
-      MONGO_INITDB_ROOT_PASSWORD: secret            # Mot de passe root MongoDB
+      - "5000:5000"                                 # Mappage des ports: port 5000 de l'hôte vers le port 5000 du conteneur
     volumes:
-      - /home/toto/projet-rt0707/mongoDb:/data/db   # Montage du volume hôte dans le conteneur MongoDB
+      - /home/toto/projet-rt0707/front:/app         # Montage du volume: dossier sur l'hôte vers le dossier dans le conteneur.
+    depends_on:
+      - server                                      
 
-  door:                                             
+  brokerMqtt: # File MQTT 
+    image: eclipse-mosquitto:latest
+    container_name: container_broker_mqtt
+    ports:
+      - "1883:1883" # Port standard pour MQTT
+      - "9001:9001" # Port pour MQTT sur Websockets, si nécessaire              
+    volumes:
+      - /home/toto/projet-rt0707/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf 
+
+  door:  # le publisher MQTT                                                                           
     build:                                          
       context: .                                    
       dockerfile: Dockerfile.door                  
     image: image_flask_door                        
     container_name: container_door                
     ports:
-<<<<<<< HEAD
       - "5002:5000"    
-      - "1884:1883"                               
+      - "1884:1883"     
+      - "9002:9001"                          
     volumes:
       - /home/toto/projet-rt0707/porte:/app    
+    depends_on:
+      - brokerMqtt  
 
-  brokerMqtt:                                             
-    build:                                          
-      context: .                                    
-      dockerfile: Dockerfile.brokerMqtt              
-    image: image_flask_broker_mqtt                    
-    container_name: container_broker_mqtt          
-    ports:
-      - "1883:1883" # Port standard pour MQTT
-      - "9001:9001" # Port pour MQTT sur Websockets, si nécessaire                     
-    volumes:
-      - /home/toto/projet-rt0707/brokerMqtt:/app        
-
-=======
-      - "5000:5000"                                 
-    volumes:
-      - /home/toto/projet-rt0707/porte:/app    
-
->>>>>>> 929e5c7eb05d6e25e5d9ea0fa0a3885ff5cbd3b8
-  iotHub:                                             
+  iotHub: # Le subscriber MQTT                              
     build:                                          
       context: .                                    
       dockerfile: Dockerfile.iotHub                  
     image: image_flask_iot_hub                       
     container_name: container_iot_hub               
     ports:
-<<<<<<< HEAD
-      - "5004:5000"                                 
+      - "5004:5000"    
+      - "1885:1883"                             
     volumes:
       - /home/toto/projet-rt0707/iotHub:/app   
-        
+    depends_on:
+      - brokerMqtt  
+      
 networks:
   my_network:
     driver: bridge    
-=======
-      - "5000:5000"                                 
-    volumes:
-      - /home/toto/projet-rt0707/iotHub:/app         
-
->>>>>>> 929e5c7eb05d6e25e5d9ea0fa0a3885ff5cbd3b8
-
-# test

@@ -1,12 +1,24 @@
 from flask import jsonify
+
+# Imports pour le Fonctionnement de MongoDB
 from pymongo.errors import PyMongoError
 from bson.objectid import ObjectId
-
-import json
 from datetime import datetime, timedelta
 
+import json
+
+# Imports de Classes Personnelles
 from src.classes.mongoDb import MongoDBManager
 from src.classes.qrCode import QRCode
+
+"""
+|
+|   Classe utilisé pour gérer les opérations CRUD d'un Ticket de Transport.
+|   
+|   Auteur : Mahmoud ILLOURMANE
+|   Date de création : 25 Janvier 2024
+|
+"""
 
 class Ticket:
     def __init__(self, db_manager:MongoDBManager, date_achat:datetime, type:str, validite:datetime, etat='N', nb_scannes=0, id=None, user_id=None):

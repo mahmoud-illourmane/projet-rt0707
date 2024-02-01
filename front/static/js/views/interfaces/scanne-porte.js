@@ -76,13 +76,14 @@ $(document).ready(function() {
                                     <td>${ticket.validite}</td>
                                     <td>${ticket.nb_scannes}</td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-success btn-rounded" data-bs-toggle="modal" data-bs-target="#ticketModal${ticket._id}">
-                                            Afficher
-                                        </button>
-                        
-                                        <button type="button" class="btn btn-sm btn-primary btn-rounded btn-scan" data-choice-type=${ticket.type} data-titre-qrcode=${ticket.qr_code} data-ticket-choice=${ticket._id}>
-                                            Scanner
-                                        </button>
+                                        <div class="btns-scan">
+                                            <button type="button" class="btn btn-sm btn-success btn-rounded" data-bs-toggle="modal" data-bs-target="#ticketModal${ticket._id}">
+                                                Afficher
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-primary btn-rounded btn-scan" data-choice-type=${ticket.type} data-titre-qrcode=${ticket.qr_code} data-ticket-choice=${ticket._id}>
+                                                Scanner
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             `;
@@ -324,106 +325,5 @@ $(document).ready(function() {
             }
         });
     }
-
-    /**
-     * Fonction qui effectue une requête Ajax pour ouvrir une porte, lorsque il s'agit d'un ticket.
-     *
-     * @param {string} ticketId - L'identifiant du ticket.
-     */
-    // function scannerTicket(ticketId) {
-    //     var ticket = {
-    //         ticket_id: ticketId,
-    //     };
-        
-    //     $.ajax({
-    //         url: '/api/scanne/ticket',
-    //         type: 'PUT',
-    //         contentType: 'application/json',
-    //         data: JSON.stringify(ticket),
-    //         success: function(response) {
-    //             if(response.status == 200) {
-    //                 showToastMessage(response.message, 'text-success');
-    //                 $('.led').removeClass('red').addClass('green');
-
-    //                 // Démarre le clignotement de la porte
-    //                 const clignotement = setInterval(toggleClassesDoor, 500); // Alterne toutes les 500 millisecondes (0.5 seconde)
-    //                 // Arrête le clignotement après 3 secondes
-    //                 setTimeout(() => {
-    //                     clearInterval(clignotement); // Arrête le clignotement
-    //                     $('.led').removeClass('green green-light').addClass('red'); // Revenir à la classe "red"
-    //                     showToastMessage("Porte fermée.", 'text-danger');
-    //                 }, 3000);
-
-    //             }else {
-    //                 showToastMessage(response.error, 'text-danger');
-    //             }
-    //         },
-    //         error: function(xhr, textStatus, errorThrown) {
-    //             var errorMessage = 'Erreur inconnue';
-    //             if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-    //                 errorMessage = xhr.responseJSON.error;
-    //             } else if (textStatus !== 'error') {
-    //                 errorMessage = 'Erreur AJAX: ' + textStatus;
-    //             } else if (errorThrown) {
-    //                 errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
-    //             }
-    //             console.log(errorMessage);
-    //             showToastMessage(errorMessage, 'text-danger');
-    //         },
-    //         complete: function() {
-    //             getAllTicketsUser();
-    //         }
-    //     });
-    // }
-
-    /**
-     * Fonction qui effectue une requête Ajax pour ouvrir une porte, lorsque il s'agit d'un badge.
-     *
-     * @param {string} ticketId - L'identifiant du ticket.
-     */
-    // function scannerBadge(badgeId) {
-    //     var badge = {
-    //         badge_id: badgeId,
-    //     };
-        
-    //     $.ajax({
-    //         url: '/api/scanne/badge',
-    //         type: 'PUT',
-    //         contentType: 'application/json',
-    //         data: JSON.stringify(badge),
-    //         success: function(response) {
-    //             if(response.status == 200) {
-    //                 showToastMessage(response.message, 'text-success');
-    //                 $('.led').removeClass('red').addClass('green');
-
-    //                 const clignotement = setInterval(toggleClassesDoor, 500); 
-
-    //                 setTimeout(() => {
-    //                     clearInterval(clignotement);
-    //                     $('.led').removeClass('green green-light').addClass('red'); 
-    //                     showToastMessage("Porte fermée.", 'text-danger');
-    //                 }, 3000);
-
-    //             }else {
-    //                 showToastMessage(response.error, 'text-danger');
-    //             }
-    //         },
-    //         error: function(xhr, textStatus, errorThrown) {
-    //             var errorMessage = 'Erreur inconnue';
-    //             if (xhr.status && xhr.responseJSON && xhr.responseJSON.error) {
-    //                 errorMessage = xhr.responseJSON.error;
-    //             } else if (textStatus !== 'error') {
-    //                 errorMessage = 'Erreur AJAX: ' + textStatus;
-    //             } else if (errorThrown) {
-    //                 errorMessage = 'Erreur exceptionnelle: ' + errorThrown;
-    //             }
-    //             console.log(errorMessage);
-    //             showToastMessage(errorMessage, 'text-danger'); 
-    //         },
-    //         complete: function() {
-    //             getAllTicketsUser();
-    //         }
-    //     });
-    // }
 });
 

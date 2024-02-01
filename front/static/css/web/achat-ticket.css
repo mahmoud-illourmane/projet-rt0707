@@ -15,7 +15,6 @@
         display: inline-flex;
         flex-direction: column;
         width: 20%;
-        background-color: rgb(46, 122, 89);
         border-radius: 15px;
         padding: 15px;
     }
@@ -24,6 +23,18 @@
     }
     .ticket-illustration {
         text-align: center;
+    }
+
+    .color_ticket_type1 {
+        background-color: rgb(46, 122, 89);
+    }
+
+    .color_ticket_type2 {
+        background-color: rgb(46, 85, 122);
+    }
+
+    .color_ticket_type3 {
+        background-color: rgb(74, 122, 46);
     }
 /*== END/Ticket infos ==*/
 

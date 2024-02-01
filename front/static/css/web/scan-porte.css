@@ -5,12 +5,19 @@
 /*== Tableaux & Porte ==*/
     .operation {
         display: flex;
+        align-items: center;
+        gap: 10px;
         flex-direction: row-reverse;
         justify-content: space-evenly;
     }
     .tables-tickets-badges {
         display: flex;
         flex-direction: column;
+    }
+    .btns-scan {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 /*== END/Tableaux & Porte ==*/  
 
@@ -21,7 +28,6 @@
         gap: 20px;
         margin-bottom: 20px;
     }
-
     .modal-qrcode-content, .modal-qrcode-image {
         margin-top: 20px;
 
@@ -37,15 +43,7 @@
 /*== END/Modal-QrCODE  ==*/
 
 /*== Simulation input & porte ==*/
-    .simulation-scan {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        align-items: center;
-    }
-    .qr-code-input {
-        width: 100%;
-    }
+    
 /*== END/Simulation input & porte ==*/
 
 /*== Simulation Porte ==*/
@@ -64,9 +62,9 @@
         position: absolute;
         bottom: 10px;
         left: 5%;
+        top: 50%;
         border-radius: 50%;
         display: flex;
-        top: 50%;
         align-items: center; /* Centrer l'icône verticalement */
         justify-content: center; /* Centrer l'icône horizontalement */
     }
@@ -80,6 +78,7 @@
         top: 65%;   
         border-radius: 10%;
     }
+
     .red { background-color: red; }
     .green { background-color: rgb(16, 140, 64); }
     .green-light { background-color: rgb(74, 182, 116); }
@@ -108,16 +107,4 @@
             flex-direction: column;
         }
     /*== END/Tableaux & Porte ==*/  
-
-
-    /*== Simulation input & porte ==*/
-        .simulation-scan {
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 20px
-        }
-        .qr-code-input {
-            width: 100%;
-        }
-    /*== END/Simulation input & porte ==*/
 }

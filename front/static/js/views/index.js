@@ -9,6 +9,7 @@ $(document).ready(function() {
                 if(response.status == 200) {
                     // Total tickets achetés
                     $('#total-achat').text(response.ticket_count);
+                    $('#total-scans').text(response.total_scans);
 
                     // Afficher le QRCODE du dernier Ticket Acheté
                     var lastTicket = response.last_ticket_qrcode;

@@ -6,6 +6,7 @@ import requests
 from functools import wraps
 
 from src.classes.user import User
+from src.classes.tools import write_log
 
 """
 |
@@ -665,6 +666,8 @@ def scanneBadge():
 def sendRequestOpenDoor():
     
     if request.method == 'PUT':
+        write_log("FRONT : Envoi de la demande.")
+        
         data  = request.get_json()
 
         api_url = f"{server_door_url}/door/publish"
@@ -673,6 +676,7 @@ def sendRequestOpenDoor():
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
+            write_log(f"Erreur de requête vers l'URL distante : {str(e)}")
             error_message = f"Erreur de requête vers l'URL distante : {str(e)}"
             return jsonify({
                 "status": 500, 

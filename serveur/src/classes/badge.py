@@ -1,10 +1,13 @@
 from flask import jsonify
+
+# Imports pour le Fonctionnement de MongoDB
 from pymongo.errors import PyMongoError
 from bson import ObjectId
-
 from datetime import datetime, timedelta
+
 import json
 
+# Imports de Classes Personnelles
 from src.classes.mongoDb import MongoDBManager
 from src.classes.qrCode import QRCode
 

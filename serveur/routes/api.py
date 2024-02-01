@@ -7,6 +7,7 @@ from src.classes.mongoDb import MongoDBManager
 from src.classes.user import User
 from src.classes.ticket import Ticket
 from src.classes.badge import Badge
+from src.classes.tools import write_log
 
 """
 |
@@ -275,7 +276,7 @@ def purchase():
             requête JSON.
     """
 
-    if request.method == 'POST':
+    if request.method == 'POST':        
         user_id = None
         date_achat = datetime.datetime.now()
         validite = date_achat + datetime.timedelta(days=365)
@@ -346,7 +347,8 @@ def scanneTicket():
     
     if request.method == 'PUT':
         data = request.get_json()
-        print('SCAN TICKET : données reçus.', data)
+        write_log(f"SCAN TICKET : données reçus : {data}")
+        # print('SCAN TICKET : données reçus.', data)
         
         ticket_id = data['qrId']
         result = Ticket.scannerTicket(ticket_id, db_manager)
@@ -380,7 +382,9 @@ def scanneBadge():
     
     if request.method == 'PUT':
         data = request.get_json()
-        print('SCAN BADGE : ', data)
+        
+        write_log(f"SCAN BADGE : données reçus : {data}")
+        # print('SCAN BADGE : ', data)
         
         badge_id = data['qrId']
         result = Badge.scannerBadge(badge_id, db_manager)

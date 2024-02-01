@@ -1,5 +1,14 @@
 import qrcode, io, base64, json
 
+"""
+|
+|   Classe utilisé pour gérer les opérations sur les QRCODE.
+|   
+|   Auteur : Mahmoud ILLOURMANE
+|   Date de création : 25 Janvier 2024
+|
+"""
+
 class QRCode:
     @staticmethod
     def create_qr_code_from_json(json_data):

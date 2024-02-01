@@ -1,10 +1,12 @@
 # Ignorer les fichiers et les répertoires
 .vscode
-front_end/__pycache__/
+front/__pycache__/
+iotHub/__pycache__/
+porte/__pycache__/
+serveur/__pycache__/
 mongoDb/
+logs/
 
 *.pyc
 *.pyo
 *.pyd
-
-front_end/routes/__pycache__

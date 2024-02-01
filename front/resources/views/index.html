@@ -11,6 +11,12 @@
 {% block content %}
 <div class="container-fluid mt-3">
     <h1>Résumé de votre journée d'aujourd'hui</h1>
+    
+    {% if current_user.is_authenticated %}
+        <p>Bienvenue, {{ current_user.first_name }}!</p>
+    {% else %}
+        <p>Connectez-vous pour accéder à votre compte.</p>
+    {% endif %}
 
     <div class="resumes">
         <div class="resume">
@@ -29,7 +35,7 @@
             </div>
             <div class="resume-content">
                 <h5>Total de scanes effectué ce mois-ci</h5>
-                <h6 id="total-scanes">0</h6>
+                <h6 id="total-scans">0</h6>
             </div>
         </div>
 
@@ -65,15 +71,6 @@
         </div>
     </div>
 
-    <div class="container">
-        
-    </div>
-
-    {% if current_user.is_authenticated %}
-        <p>Bienvenue, {{ current_user.first_name }}!</p>
-    {% else %}
-        <p>Connectez-vous pour accéder à votre compte.</p>
-    {% endif %}
 </div>
 {% endblock %}
 

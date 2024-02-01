@@ -1,10 +1,12 @@
 import paho.mqtt.client as mqtt
 import json
-from routes.api import sendQrCodeInfosToServer
+
+from routes.api import *
+from src.classes.tools import write_log
 
 class MQTTSubscriber:
 
-    def __init__(self):
+    def __init__(self, app):
         """
             Constructeur de la classe MQTTSubscriber.
 
@@ -12,10 +14,10 @@ class MQTTSubscriber:
             et active le logging pour le débogage.
         """
 
+        self.app = app
         self.client = mqtt.Client("PythonSubscriber")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
-        # Active le logging pour le débogage
         self.client.enable_logger()
 
     def on_connect(self, client, userdata, flags, rc):
@@ -29,10 +31,10 @@ class MQTTSubscriber:
         """
         
         if rc == 0:
-            # print("Connecté avec succès au broker MQTT")
+            # write_log("Connecté avec succès au broker MQTT")
             client.subscribe("check/transport")
         else:
-            print(f"Échec de la connexion avec le code {rc}")
+            write_log(f"Échec de la connexion avec le code {rc}")
 
     def on_message(self, client, userdata, msg):
         """
@@ -43,12 +45,15 @@ class MQTTSubscriber:
             :param msg: Objet message contenant le topic et le payload du message reçu.
         """
         
-        # print(f"Message reçu -> Topic: {msg.topic}, Payload: {msg.payload}")
+        write_log(f"Message reçu -> Topic: {msg.topic}, Payload: {msg.payload}")
         try:
-            qrCodeInfos = json.loads(msg.payload)
-            sendQrCodeInfosToServer(qrCodeInfos)
+            qrCodeInfos = json.loads(msg.payload.decode('utf-8'))  # Assurez-vous de décoder le payload
+            # Utiliser le contexte de l'application pour exécuter la fonction Flask
+            with self.app.app_context():
+                sendQrCodeInfosToServer(qrCodeInfos)
         except json.JSONDecodeError:
-            print("Erreur lors de la décodification du message:", msg.payload)
+            write_log(f"Erreur lors de la décodification du message: {msg.payload}")
+
 
     def start(self):
         """
@@ -60,5 +65,5 @@ class MQTTSubscriber:
         """
         
         # Utilisation de connect_async pour une gestion non bloquante de la connexion
-        self.client.connect_async("localhost", 1883, 60)
+        self.client.connect_async("brokerMqtt", 1883, 300)
         self.client.loop_start()

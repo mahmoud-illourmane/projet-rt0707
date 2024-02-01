@@ -1,12 +1,24 @@
 from flask import jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
+
+# Imports pour le Fonctionnement de MongoDB
 from bson import ObjectId
 from pymongo.errors import PyMongoError
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import datetime, re
 
+# Imports de Classes Personnelles
 from src.classes.mongoDb import MongoDBManager
 from src.classes.qrCode import QRCode
+
+"""
+|
+|   Classe utilisé pour gérer les opérations CRUD d'un utilisateur.
+|   
+|   Auteur : Mahmoud ILLOURMANE
+|   Date de création : 12 Janvier 2024
+|
+"""
 
 class User:
     def __init__(self, db_manager: MongoDBManager, firstName, email, password, role, id=None):
@@ -97,7 +109,7 @@ class User:
             "_id": str(self.id),
             "firstName": self.firstName,
             "email": self.email,
-            "password": self.password,  # Le mot de passe doit être hashé.
+            "password": self.password,
             "role": self.role
         }
 
@@ -338,18 +350,36 @@ class User:
                 date_achat = last_ticket.get('date_achat', 'N/A')
                 type = last_ticket.get('type', 'N/A')
                 validite = last_ticket.get('validite', 'N/A')
-                etat = last_ticket.get('etat', 'N/A')
-                nb_scannes = last_ticket.get('nb_scannes', '0')
+                # etat = last_ticket.get('etat', 'N/A')
+                # nb_scannes = last_ticket.get('nb_scannes', '0')
                 
                 last_ticket_qrcode = QRCode.create_qr_code_with_info(id, date_achat, type, validite)
             else:
                 last_ticket_qrcode = None
-                
             
+            # Agréger les tickets pour calculer la somme des scans depuis le début du mois
+            pipeline = [
+                {
+                    '$match': {
+                        'user_id': user_id,
+                        'date_achat': {'$gte': first_day_of_month_utc}
+                    }
+                },
+                {
+                    '$group': {
+                        '_id': '$user_id',                      # Grouper par user_id
+                        'total_scans': {'$sum': '$nb_scannes'}  # Calculer la somme des nb_scannes
+                    }
+                }
+            ]
+            total_scans_result = tickets_collection.aggregate(pipeline)
+            total_scans = next(total_scans_result, {}).get('total_scans', 0)
+    
             return jsonify({
                 'status': 200,
                 'ticket_count': ticket_count,
-                'last_ticket_qrcode': last_ticket_qrcode
+                'last_ticket_qrcode': last_ticket_qrcode,
+                'total_scans': total_scans
             }), 200
         except PyMongoError as e:
             return jsonify({
