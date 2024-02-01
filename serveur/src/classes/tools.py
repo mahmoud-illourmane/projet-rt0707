@@ -10,8 +10,8 @@ def write_log(entry, filename="server_log.txt"):
         - filename (str): Le nom du fichier log. Par défaut, "log.txt".
     """
     
-    # Obtention du chemin complet vers le répertoire parent du dossier logs
-    base_dir = os.path.dirname(os.path.dirname(__file__))
+    # Obtention du chemin complet deux crans en arrière du dossier actuel
+    base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
     log_dir = os.path.join(base_dir, "logs")
     log_file_path = os.path.join(log_dir, filename)
 
@@ -19,7 +19,7 @@ def write_log(entry, filename="server_log.txt"):
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    # Obtention de la date et de l'heure actuelles
+    # Obtention de la date et de l'heure actuelles, ajustée d'une heure
     now = datetime.now() + timedelta(hours=1)
     date_time = now.strftime("%Y-%m-%d %H:%M:%S")
 
@@ -28,4 +28,4 @@ def write_log(entry, filename="server_log.txt"):
         file.write(f"{date_time} - {entry}\n")
 
     # Donne des autorisations pour supprimer le fichier
-    os.chmod(log_file_path, 0o666) 
+    os.chmod(log_file_path, 0o666)

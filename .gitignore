@@ -6,7 +6,7 @@ porte/__pycache__/
 serveur/__pycache__/
 mongoDb/
 logs/
-
+app.py
 *.pyc
 *.pyo
 *.pyd
