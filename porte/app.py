@@ -27,8 +27,6 @@ from src.classes.tools import write_log
 
 # Déclaration de la file d'attente pour permettre des échanges entre CoAP et Flask
 response_queue = Queue()
-# Création d'un verrou (lock) pour assurer la synchronisation des opérations sur la file d'attente
-queue_lock = threading.Lock()
 
 app = Flask(__name__)
 app.debug = True
@@ -48,15 +46,18 @@ class SimpleResource(Resource):
             :param request: L'objet de requête CoAP reçu.
             :return: Un objet de réponse CoAP.
         """
-        payload = request.payload.decode('utf-8')                   # Récupération du payload
-        write_log(f"Message received from subscriber: {payload}")
-        with queue_lock:
-            response_queue.put(payload)                             # Place la réponse dans la queue                             
-        if payload == 'OK':                                         # Vérification de la valeur du payload pour débogage
+        payload = request.payload.decode('utf-8')               # Récupération du payload
+        write_log(f"Message COAP RECU: {payload},")
+                               
+        if payload == 'OK':                                     # Vérification de la valeur du payload pour débogage
+            response_queue.put('OK')                            # Place la réponse dans la queue       
             write_log("CoAP : OK")
+            write_log(response_queue.qsize())
         elif payload == 'KO':
+            response_queue.put('KO')
+            write_log(response_queue.qsize())
             write_log("CoAP : KO")
-        return Message(code=CHANGED, payload=b'OK')                 # Retourne la réponse (Obligation protocolaire)
+        return Message(code=CHANGED, payload=b'OK')             # Retourne la réponse (Obligation protocolaire)
 
 class CoAPServer:
     def __init__(self):
@@ -112,9 +113,6 @@ def publish_message():
     """
     
     if request.method == 'PUT':
-        
-        # Permet de faitre référence à la variable response_queue globale
-        global response_queue
         write_log("Je recois une demande de scan.")
         
         """
@@ -154,7 +152,8 @@ def publish_message():
         }
         # Utilisation de la méthode de classe publish de MQTTClient
         mqtt_client.publish(topic, json.dumps(message))
-            
+        write_log("PORTE: Topic Publié.")
+        
         """
         |   PARTIE 4
         |   Après que le dispositif ait envoyé la topic, il doit attendre la réponse de
@@ -163,8 +162,9 @@ def publish_message():
         """
         # J'attends que la réponse CoAP soit mise dans la file d'attente pour renvoyer la réponse au client
         try:
-            with queue_lock:
-                coap_response = response_queue.get(timeout=5) 
+            write_log(response_queue.qsize())
+            write_log("PORTE: J'attends dans la file.")
+            coap_response = response_queue.get(timeout=5) 
         except Empty:
             write_log("PORTE: La durée d'attente de 5 secondes est écoulée, erreur (file d'attente).")
             return jsonify({
@@ -210,6 +210,6 @@ if __name__ == '__main__':
     # Démarrer l'application Flask sur le thread principal
     
     # En Vm
-    # app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
     # En Local
-    app.run(host='0.0.0.0', port=5003)
+    # app.run(host='0.0.0.0', port=5003)
