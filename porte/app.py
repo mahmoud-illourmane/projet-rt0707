@@ -15,8 +15,7 @@ from aiocoap import *
 from aiocoap.resource import Resource, Site
 
 # Import de threading pour lancer le serveur CoAP en Parralèle de Flask
-import threading, json
-
+import threading, json, time
 from queue import Queue, Empty
 
 # Imports de Classes Personnelles
@@ -46,18 +45,19 @@ class SimpleResource(Resource):
             :param request: L'objet de requête CoAP reçu.
             :return: Un objet de réponse CoAP.
         """
-        payload = request.payload.decode('utf-8')               # Récupération du payload
+        payload = request.payload.decode('utf-8')                           # Récupération du payload
         write_log(f"Message COAP RECU: {payload},")
                                
-        if payload == 'OK':                                     # Vérification de la valeur du payload pour débogage
-            response_queue.put('OK')                            # Place la réponse dans la queue       
+        if payload == 'OK':                                                 # Vérification de la valeur du payload pour débogage
+            write_log(f"COAP ECRIT DANS LA FILE : {response_queue.qsize()}")
+            response_queue.put('OK')                                        # Place la réponse dans la queue       
             write_log("CoAP : OK")
-            write_log(response_queue.qsize())
+            
         elif payload == 'KO':
             response_queue.put('KO')
             write_log(response_queue.qsize())
             write_log("CoAP : KO")
-        return Message(code=CHANGED, payload=b'OK')             # Retourne la réponse (Obligation protocolaire)
+        return Message(code=CHANGED, payload=b'OK')                         # Retourne la réponse (Obligation protocolaire)
 
 class CoAPServer:
     def __init__(self):
@@ -160,7 +160,9 @@ def publish_message():
         |   l'IOT-HUB via une requête CoAP, avant de renvoyer la réponse de la requête HTTP
         |   de la PARTIE 1.
         """
+        
         # J'attends que la réponse CoAP soit mise dans la file d'attente pour renvoyer la réponse au client
+        time.sleep(2)
         try:
             write_log(response_queue.qsize())
             write_log("PORTE: J'attends dans la file.")

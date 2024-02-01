@@ -79,7 +79,8 @@ services:                                           # Définition des services (
     volumes:
       - /home/toto/projet-rt0707/iotHub:/app   
     depends_on:
-      - brokerMqtt  
+      - brokerMqtt
+      - server  
       
 networks:
   my_network:

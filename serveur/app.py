@@ -21,10 +21,10 @@ app.debug = True
 |
 """
 # En VM
-# app.config['SERVER_FRONT_END_URL'] = 'http://front:5000'
+app.config['SERVER_FRONT_END_URL'] = 'http://front:5000'
 
 # En Local
-app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
+# app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
 
 """
 |
@@ -34,22 +34,22 @@ app.config['SERVER_FRONT_END_URL'] = 'http://127.0.0.1:5000'
 DATABASE_NAME = "projetRt0707"
 
 # En VM
-# MONGO_USERNAME = 'mongoadmin'
-# MONGO_PASSWORD = 'secret'
-# MONGO_HOSTNAME = 'mongo'
-# MONGO_PORT = 27017
-# MONGO_URI = f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOSTNAME}:{MONGO_PORT}"
+MONGO_USERNAME = 'mongoadmin'
+MONGO_PASSWORD = 'secret'
+MONGO_HOSTNAME = 'mongo'
+MONGO_PORT = 27017
+MONGO_URI = f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOSTNAME}:{MONGO_PORT}"
 
 # --------------
 # En local
-MONGO_URI = f"mongodb://localhost:27017"
+# MONGO_URI = f"mongodb://localhost:27017"
 
 # Importation du fichier api.py
 from routes.api import *
 
 if __name__ == '__main__':
     # En Vm
-    # app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
     
     # En Local
-    app.run(host='0.0.0.0', port=5001)
+    # app.run(host='0.0.0.0', port=5001)

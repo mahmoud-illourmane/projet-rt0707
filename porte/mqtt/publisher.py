@@ -14,13 +14,13 @@ class MQTTClient:
         """
         self.client = mqtt.Client(client_id)
         # En Vm
-        # try:
-        #     self.client.connect("brokerMqtt", 1883, 60)
-        # except Exception as e:
-        #     write_log(f"Erreur lors de la connexion au BrokerMqtt: {str(e)}")
+        try:
+            self.client.connect("brokerMqtt", 1883, 60)
+        except Exception as e:
+            write_log(f"Erreur lors de la connexion au BrokerMqtt: {str(e)}")
         
         # En Local
-        self.client.connect("localhost", 1883, 60)
+        # self.client.connect("localhost", 1883, 60)
         
     def publish(self, topic, message):
         """
