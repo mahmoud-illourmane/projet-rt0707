@@ -22,13 +22,10 @@ from src.classes.tools import write_log
 
 # FLASK
 app = Flask(__name__)
-app.debug = True     # Activation du mode de débogage
+# app.debug = True
 
 # En Vm
 app.config['SERVER_BACK_END_URL'] = 'http://server:5000'
-# En Local
-# app.config['SERVER_BACK_END_URL'] = 'http://127.0.0.1:5001'
-
 server_back_end_url = app.config.get('SERVER_BACK_END_URL')
 
 """
@@ -50,6 +47,7 @@ class MQTTSubscriber:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.enable_logger()
+        self.is_connected = False
 
     def on_connect(self, client, userdata, flags, rc):
         """
@@ -62,7 +60,8 @@ class MQTTSubscriber:
         """
         
         if rc == 0:
-            # write_log("Connecté avec succès au broker MQTT")
+            self.is_connected = True  # Marquer comme connecté
+            write_log("IOT-HUB : Connecté avec succès au broker MQTT", "log_connexion.txt")
             client.subscribe("check/transport")
         else:
             write_log(f"Échec de la connexion avec le code {rc}")
@@ -76,12 +75,11 @@ class MQTTSubscriber:
             :param msg: Objet message contenant le topic et le payload du message reçu.
         """
         
-        write_log(f"Message reçu -> Topic: {msg.topic}, Payload: {msg.payload}")
+        write_log(f"IOT-HUB : Topic reçu de la part de la porte -> {msg.topic}, Payload: {msg.payload}")
         try:
             qrCodeInfos = json.loads(msg.payload.decode('utf-8'))  # Assurez-vous de décoder le payload
             # Utiliser le contexte de l'application pour exécuter la fonction Flask
             with self.app.app_context():
-                write_log("IOT HUB: Tentative d'appel de la fonction sendQrCodeInfosToServer.")
                 sendQrCodeInfosToServer(qrCodeInfos)
         except json.JSONDecodeError:
             write_log(f"Erreur lors de la décodification du message: {msg.payload}")
@@ -96,8 +94,9 @@ class MQTTSubscriber:
         """
         
         # Utilisation de connect_async pour une gestion non bloquante de la connexion
-        self.client.connect_async("brokerMqtt", 1883, 60)
-        self.client.loop_start()
+        if not self.is_connected: 
+            self.client.connect_async("brokerMqtt", 1883, 60)
+            self.client.loop_start()
 
 """
 |
@@ -109,7 +108,7 @@ async def send_coap_message(uri="coap://door/resource", payload=b'OK'):
     request = Message(code=POST, payload=payload, uri=uri)
     try:
         response = await protocol.request(request).response
-        # print('Message sent to door:', response.payload)
+        print('IOT-HUB Requête CoAP envoyée : ', response.payload)
         write_log(f"REQUETE COAP : Message envoyé au serveur PORTE COAP : {response.payload}.")
     except Exception as e:
         write_log(f"Failed to send CoAP message: {str(e)}")
@@ -133,8 +132,6 @@ def sendQrCodeInfosToServer(qrCodeInfos:json):
     
     qrType = qrCodeInfos['QrType']
     qrId = qrCodeInfos['QrId']
-
-    write_log("IOT HUB: Envoi des données A L'API REST.")
         
     # Détermine quel endPoint coté serveur flask appeler
     if qrType == 'Badge':
@@ -154,13 +151,13 @@ def sendQrCodeInfosToServer(qrCodeInfos:json):
 
         response = requests.put(api_url, json=data)
         response.raise_for_status()
-        write_log("IOT HUB : Données envoyées à l'API REST.")
+        write_log("IOT-HUB : Données du QRCODE envoyées à l'API REST.")
             
         # Envoie de la requête CoAP à la porte
         if response.status_code == 200:
-            write_log("IOT HUB : REPONSE RECU OK, Tentative d'envoie CoaP (OK).")
+            write_log("IOT HUB : REPONSE RECU DE LA PART DE L'API REST [OK], Tentative d'envoie CoaP (OK).")
             threading.Thread(target=lambda: run_async_coap("coap://door/resource", b'OK'), daemon=True).start()
-            write_log("IOT HUB : Tentative d'envoie CoaP (OK) FAITE.")
+            write_log("IOT HUB : Tentative d'envoie CoAP FAITE.")
         else:
             write_log("IOT HUB : REPONSE RECU KO, Tentative d'envoie CoaP (KO).")
             threading.Thread(target=lambda: run_async_coap("coap://door/resource", b'KO'), daemon=True).start()
@@ -180,9 +177,7 @@ if __name__ == '__main__':
     mqtt_thread.start()
     
     # En Vm
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
     
     # En local
     # app.run(host='0.0.0.0', port=5003)
-
-    

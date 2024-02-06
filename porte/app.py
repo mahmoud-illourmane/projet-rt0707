@@ -45,19 +45,18 @@ class SimpleResource(Resource):
             :param request: L'objet de requête CoAP reçu.
             :return: Un objet de réponse CoAP.
         """
-        payload = request.payload.decode('utf-8')                           # Récupération du payload
-        write_log(f"Message COAP RECU: {payload},")
+        payload = request.payload.decode('utf-8')                                       # Récupération du payload
+        write_log(f"PORTE : Requête COAP RECU : {payload},")
                                
-        if payload == 'OK':                                                 # Vérification de la valeur du payload pour débogage
-            write_log(f"COAP ECRIT DANS LA FILE : {response_queue.qsize()}")
-            response_queue.put('OK')                                        # Place la réponse dans la queue       
-            write_log("CoAP : OK")
-            
+        if payload == 'OK':                                                             # Vérification de la valeur du payload pour débogage
+            write_log("SERVEUR COAP : ECRIT DANS LA FILE OK.")
+            response_queue.put('OK')                                                    # Place la réponse dans la queue       
+            write_log(f"SERVEUR COAP A ECRIT DANS LA FILE : {payload}")
         elif payload == 'KO':
+            write_log("SERVEUR COAP : ECRIT DANS LA FILE KO.")
             response_queue.put('KO')
-            write_log(response_queue.qsize())
-            write_log("CoAP : KO")
-        return Message(code=CHANGED, payload=b'OK')                         # Retourne la réponse (Obligation protocolaire)
+            write_log(f"SERVEUR COAP A ECRIT DANS LA FILE : {payload}")
+        return Message(code=CHANGED, payload=b'OK')                                     # Retourne la réponse (Obligation protocolaire)
 
 class CoAPServer:
     def __init__(self):
@@ -87,7 +86,8 @@ class CoAPServer:
 def start_coap_server():
     """
         Fonction qui démarre le serveur CoAP en créant une 
-        instance de la classe CoAPServer et en exécutant la méthode run().
+        instance de la classe CoAPServer et en exécutant 
+        la méthode run().
     """
     server = CoAPServer()                                   # Crée une instance de la classe CoAPServer
     server.run()                                            # Lance le serveur CoAP en exécutant sa méthode run()
@@ -98,7 +98,7 @@ def start_coap_server():
 |   Dans la file MQTT.
 |
 """
-mqtt_client = MQTTClient(client_id="PythonPublisher")
+mqtt_client = MQTTClient("PythonPublisher")
 
 """
 |
@@ -113,7 +113,7 @@ def publish_message():
     """
     
     if request.method == 'PUT':
-        write_log("Je recois une demande de scan.")
+        write_log("PORTE : Je reçois une demande de scan.")
         
         """
         |   PARTIE 1
@@ -152,7 +152,6 @@ def publish_message():
         }
         # Utilisation de la méthode de classe publish de MQTTClient
         mqtt_client.publish(topic, json.dumps(message))
-        write_log("PORTE: Topic Publié.")
         
         """
         |   PARTIE 4
@@ -162,13 +161,11 @@ def publish_message():
         """
         
         # J'attends que la réponse CoAP soit mise dans la file d'attente pour renvoyer la réponse au client
-        time.sleep(2)
         try:
-            write_log(response_queue.qsize())
-            write_log("PORTE: J'attends dans la file.")
+            write_log(f"PORTE : Nombre d'éléments dans la file avant extraction de la réponse : {response_queue.qsize()}")
             coap_response = response_queue.get(timeout=5) 
         except Empty:
-            write_log("PORTE: La durée d'attente de 5 secondes est écoulée, erreur (file d'attente).")
+            write_log("PORTE: ERREUR : Exception Empty, La PORTE a été bloqué plus de 5 secondes dans la file d'attente.")
             return jsonify({
                 'status': 500,
                 'error': 'La durée d\'attente de 5 secondes est écoulée, erreur (file d\'attente).'
@@ -178,21 +175,21 @@ def publish_message():
         |   PARTIE 5
         |   Après que le dispositif ait la réponse CoAP il répond à la requête HTTP de l'utilisateur.
         """
+        write_log(f"PORTE : DONNEE EXTRAITE DEPUIS LA FILE D'ATTENTE.")
         if coap_response == 'OK':
-            write_log(f"PORTE: CoAP response OK: {response_queue}")
+            write_log(f"PORTE: Requête CoAP reçue : {coap_response}")
             return jsonify({
                 'status': 200,
                 'message': "Porte Ouverte pendant 3sc MESSAGE COAP!"
             }), 200
-                
         elif coap_response == 'KO':
-            write_log(f"PORTE: CoAP response KO: {response_queue}")
+            write_log(f"PORTE: Requête CoAP reçue : {coap_response}")
             return jsonify({
                 'status': 400,
                 'error': "Porte fermée MESSAGE COAP!"
             }), 200
         else:
-            write_log("PORTE: CoAP response unclear")
+            write_log(f"PORTE: Requête CoAP reçue : INCONNUE")
             return jsonify({
                 'status': 500,
                 'error': 'Received unclear CoAP response'
