@@ -77,8 +77,8 @@ class MQTTSubscriber:
         
         write_log(f"IOT-HUB : Topic reçu de la part de la porte -> {msg.topic}, Payload: {msg.payload}")
         try:
-            qrCodeInfos = json.loads(msg.payload.decode('utf-8'))  # Assurez-vous de décoder le payload
-            # Utiliser le contexte de l'application pour exécuter la fonction Flask
+            qrCodeInfos = json.loads(msg.payload.decode('utf-8'))
+            # Utilise le contexte de l'application pour exécuter la fonction Flask
             with self.app.app_context():
                 sendQrCodeInfosToServer(qrCodeInfos)
         except json.JSONDecodeError:

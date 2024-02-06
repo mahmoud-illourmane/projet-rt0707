@@ -38,13 +38,6 @@ app.debug = True
 
 class SimpleResource(Resource):
     async def render_post(self, request):
-        """
-            Cette méthode est appelée lorsqu'une requête CoAP 
-            est reçue par la ressource.
-
-            :param request: L'objet de requête CoAP reçu.
-            :return: Un objet de réponse CoAP.
-        """
         payload = request.payload.decode('utf-8')                                       # Récupération du payload
         write_log(f"PORTE : Requête COAP RECU : {payload},")
                                
@@ -60,37 +53,21 @@ class SimpleResource(Resource):
 
 class CoAPServer:
     def __init__(self):
-        """
-            Initialise une instance du serveur CoAP.
-        """
         self.loop = asyncio.new_event_loop()
 
     async def start_server(self):
-        """
-            Démarre le serveur CoAP en créant le contexte du 
-            serveur et en ajoutant la ressource simple.
-        """
-        root = Site()                                        # Crée le serveur CoAP ici
-        root.add_resource(['resource'], SimpleResource())    # Ajoute la SimpleResource au serveur CoAP
-        await Context.create_server_context(root)            # Crée un contexte de serveur pour le serveur CoAP
+        root = Site()                                                                   # Crée le serveur CoAP ici
+        root.add_resource(['resource'], SimpleResource())                                    # Ajoute la SimpleResource au serveur CoAP
+        await Context.create_server_context(root)                                   # Crée un contexte de serveur pour le serveur CoAP
 
     def run(self):
-        """
-            Lance le serveur CoAP en utilisant la boucle 
-            d'événements asyncio.
-        """
-        asyncio.set_event_loop(self.loop)                   # Configure la boucle d'événements asyncio pour cette instance
-        self.loop.run_until_complete(self.start_server())   # Démarre le serveur CoAP en utilisant la boucle d'événements asyncio
-        self.loop.run_forever()                             # Exécute en continu la boucle d'événements asyncio pour maintenir le serveur actif
+        asyncio.set_event_loop(self.loop)                                                        # Configure la boucle d'événements asyncio pour cette instance
+        self.loop.run_until_complete(self.start_server())                                        # Démarre le serveur CoAP en utilisant la boucle d'événements asyncio
+        self.loop.run_forever()                                                          # Exécute en continu la boucle d'événements asyncio pour maintenir le serveur actif
 
 def start_coap_server():
-    """
-        Fonction qui démarre le serveur CoAP en créant une 
-        instance de la classe CoAPServer et en exécutant 
-        la méthode run().
-    """
-    server = CoAPServer()                                   # Crée une instance de la classe CoAPServer
-    server.run()                                            # Lance le serveur CoAP en exécutant sa méthode run()
+    server = CoAPServer()                                                                            # Crée une instance de la classe CoAPServer
+    server.run()                                                                                                      # Lance le serveur CoAP en exécutant sa méthode run()
 
 """
 |
