@@ -27,7 +27,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Définissez une liste de rôles autorisés
+# Définition d'une liste de rôles autorisés
 # 1 : User, 2 : Admin, 3 : Emp
 AUTHORIZED_ROLES = [1, 2, 3] 
 
